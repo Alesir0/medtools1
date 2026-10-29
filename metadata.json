@@ -1,0 +1,6 @@
+{
+  "name": "منظومة الطبيب الذكي الشاملة",
+  "description": "منظومة طبية وسريرية شاملة لإدارة مرضى الطوارئ والردهات والغسل الكلوي وحساب جرعات الأطفال ودليل أدوية الطوارئ وصيدلية العراق مع التدقيق الذكي",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

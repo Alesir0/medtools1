@@ -1,0 +1,2984 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منظومة الطبيب الذكي الشاملة | Professional Clinical MD Suite</title>
+    <!-- خط تجوال الطبي والأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-soft: #f0f9ff;
+            --secondary: #0f172a;
+            --surface: #ffffff;
+            --bg-body: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-teal: #0d9488;
+            --accent-rose: #f43f5e;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* بنر التنبيهات */
+        .site-banner {
+            padding: 0.65rem 1.5rem;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .banner-warning { background: #fffbeb; color: #b45309; border-bottom: 1px solid #fde68a; }
+        .banner-danger { background: #fef2f2; color: #b91c1c; border-bottom: 1px solid #fecaca; }
+        .banner-info { background: #eff6ff; color: #1d4ed8; border-bottom: 1px solid #bfdbfe; }
+        .banner-success { background: #ecfdf5; color: #047857; border-bottom: 1px solid #a7f3d0; }
+
+        /* الشريط العلوي */
+        header {
+            background: linear-gradient(135deg, #0b1329 0%, #172554 100%);
+            color: #ffffff;
+            padding: 0.85rem 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-left, .header-right { display: flex; align-items: center; gap: 1rem; }
+
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 1.25rem;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-btn:hover { background: var(--primary); border-color: var(--primary); }
+
+        .brand-title { display: flex; align-items: center; gap: 0.65rem; }
+        .brand-title i { color: #38bdf8; font-size: 1.6rem; }
+        .brand-title h1 { font-size: 1.15rem; font-weight: 800; }
+
+        .badge-live {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            padding: 0.35rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .badge-live::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        /* القائمة الجانبية */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -340px;
+            width: 330px;
+            height: 100%;
+            background: #090e1a;
+            color: #e2e8f0;
+            z-index: 1000;
+            transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            border-left: 1px solid rgba(255,255,255,0.06);
+        }
+        .sidebar.open { right: 0; }
+
+        .sidebar-header {
+            padding: 1.4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0.8rem 0;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li button {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 0.9rem 1.4rem;
+            text-align: right;
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .sidebar-menu li button:hover, .sidebar-menu li button.active {
+            background: linear-gradient(90deg, rgba(2, 132, 199, 0.15) 0%, transparent 100%);
+            color: #38bdf8;
+            border-right: 4px solid var(--primary);
+        }
+        .sidebar-menu li button i { width: 20px; font-size: 1.1rem; }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            display: none;
+        }
+        .overlay.active { display: block; }
+
+        /* منطقة المحتوى */
+        main {
+            flex-grow: 1;
+            padding: 1.8rem;
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-content { display: none; animation: modernFade 0.3s ease-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes modernFade {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* الأزرار والبطاقات */
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.88rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+        }
+        .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-danger { background: var(--accent-red); box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2); }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: var(--accent-green); box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
+        .btn-success:hover { background: #059669; }
+        .btn-purple { background: var(--accent-purple); box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2); }
+        .btn-purple:hover { background: #7c3aed; }
+        .btn-teal { background: var(--accent-teal); box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2); }
+        .btn-teal:hover { background: #0f766e; }
+        .btn-rose { background: var(--accent-rose); box-shadow: 0 2px 4px rgba(244, 63, 94, 0.2); }
+        .btn-rose:hover { background: #e11d48; }
+        .btn-secondary { background: #64748b; }
+
+        .page-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-container {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.6rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-container h2 {
+            font-size: 1.25rem;
+            color: var(--secondary);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* شبكة الكروت */
+        .patients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .patient-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .patient-card:hover { transform: translateY(-3px); border-color: #38bdf8; box-shadow: var(--shadow-md); }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-top h3 { font-size: 1.05rem; font-weight: 800; color: var(--secondary); }
+        .doc-badge { background: #f1f5f9; color: #475569; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+
+        .patient-data-item {
+            font-size: 0.86rem;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+            display: flex;
+            gap: 0.4rem;
+        }
+        .patient-data-item strong { color: var(--text-dark); min-width: 75px; }
+
+        .cc-highlight {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.83rem;
+            font-weight: 700;
+            margin: 0.4rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .vitals-pill-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.65rem;
+            padding-top: 0.65rem;
+            border-top: 1px dashed var(--border);
+        }
+        .v-pill {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        /* تصنيف الترياج بالطوارئ ESI */
+        .triage-level-badge {
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .esi-1 { background: #fee2e2; color: #b91c1c; border: 1px solid #f87171; }
+        .esi-2 { background: #ffedd5; color: #c2410c; border: 1px solid #fb923c; }
+        .esi-3 { background: #fef9c3; color: #a16207; border: 1px solid #facc15; }
+
+        /* النوافذ المنبثقة */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal.open { display: flex; }
+
+        .modal-box {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 950px;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-head {
+            background: #f8fafc;
+            padding: 1.1rem 1.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-content { padding: 1.5rem; overflow-y: auto; flex-grow: 1; }
+        .modal-foot {
+            background: #f8fafc;
+            padding: 1rem 1.6rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-field { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-field.full { grid-column: 1 / -1; }
+        .form-field label { font-size: 0.82rem; font-weight: 700; color: #334155; }
+        .form-field input, .form-field select, .form-field textarea {
+            padding: 0.55rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            outline: none;
+            background: #fff;
+        }
+
+        .section-bar {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--primary-hover);
+            margin: 1.3rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--primary-soft);
+            padding-bottom: 0.4rem;
+        }
+
+        /* شبكة الأدوية */
+        .meds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1rem;
+        }
+        .med-action-card {
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 1.15rem;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .med-action-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .med-card-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+        .med-card-title h4 { font-size: 1rem; font-weight: 800; color: var(--secondary); }
+        .med-tag { font-size: 0.72rem; background: var(--primary-soft); color: var(--primary-hover); padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 700; }
+        .med-card-desc { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.65rem; line-height: 1.4; }
+        .med-card-footer { display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; font-weight: 700; color: var(--primary); border-top: 1px dashed var(--border); padding-top: 0.5rem; }
+
+        .drug-detail-row {
+            margin-bottom: 0.85rem;
+            background: #f8fafc;
+            padding: 0.85rem 1rem;
+            border-radius: 8px;
+            border-right: 4px solid var(--primary);
+        }
+        .drug-detail-row h5 { font-size: 0.88rem; color: var(--secondary); margin-bottom: 0.25rem; font-weight: 700; }
+        .drug-detail-row p { font-size: 0.88rem; color: #334155; line-height: 1.5; }
+
+        /* قوائم الاختيار والقرارات */
+        .checklist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .toggle-switch-group { display: flex; gap: 0.35rem; }
+        .choice-btn {
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            background: #fff;
+            cursor: pointer;
+        }
+        .choice-btn.selected-yes { background: var(--accent-red); color: #fff; border-color: var(--accent-red); }
+        .choice-btn.selected-no { background: #64748b; color: #fff; border-color: #64748b; }
+
+        .decision-banner {
+            margin-top: 1.3rem;
+            padding: 1.1rem 1.4rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .decision-safe { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+        .decision-stop { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .decision-caution { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+        /* أزرار ولوحة التنقل السريع داخل الإدارة */
+        .admin-nav-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .admin-nav-btn {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .admin-nav-btn.active, .admin-nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .admin-section-pane { display: none; }
+        .admin-section-pane.active { display: block; animation: modernFade 0.25s ease-out; }
+
+        /* قفل لوحة الإدارة */
+        .lock-screen-box {
+            max-width: 420px;
+            margin: 3rem auto;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+        .pin-input {
+            width: 100%;
+            padding: 0.85rem;
+            font-size: 1.5rem;
+            text-align: center;
+            letter-spacing: 8px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            margin: 1.2rem 0;
+            outline: none;
+        }
+
+        .tool-order-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            gap: 0.8rem;
+        }
+
+        /* العميل السريري الذكي التفاعلي المتقدم */
+        .ai-fab {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.45);
+            cursor: pointer;
+            z-index: 900;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+        }
+        .ai-fab:hover { transform: scale(1.1) rotate(5deg); }
+
+        .ai-panel {
+            position: fixed;
+            bottom: 100px;
+            left: 25px;
+            width: 460px;
+            height: 660px;
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            z-index: 950;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            animation: modernFade 0.25s ease-out;
+        }
+        .ai-panel.open { display: flex; }
+
+        .ai-panel-header {
+            background: linear-gradient(135deg, #090e1a 0%, #172554 100%);
+            color: #fff;
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-patient-context-bar {
+            background: #f1f5f9;
+            padding: 0.5rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .ai-patient-context-bar select {
+            flex-grow: 1;
+            padding: 0.3rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .ai-panel-body {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .ai-msg {
+            max-width: 90%;
+            padding: 0.85rem 1.1rem;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+        .ai-msg.bot {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            align-self: flex-start;
+            border-top-right-radius: 0;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .ai-msg.user {
+            background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
+            color: #ffffff;
+            align-self: flex-end;
+            border-top-left-radius: 0;
+        }
+
+        .source-tag {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            margin-left: 0.3rem;
+            margin-top: 0.4rem;
+        }
+
+        .ai-quick-actions {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.5rem 0.8rem;
+            background: #f8fafc;
+            overflow-x: auto;
+            border-top: 1px solid var(--border);
+        }
+        .quick-action-pill {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.65rem;
+            border-radius: 14px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--secondary);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .quick-action-pill:hover { background: var(--primary); color: #fff; }
+
+        .ai-input-bar {
+            display: flex;
+            padding: 0.75rem;
+            background: #ffffff;
+            border-top: 1px solid var(--border);
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .ai-input-bar input {
+            flex-grow: 1;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        /* زر الصوت */
+        .voice-mic-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            color: var(--secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .voice-mic-btn.recording {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+            animation: pulse-red 1.2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* بروتوكولات الغسل الكلوي */
+        .hd-protocol-item {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            border-right: 4px solid var(--accent-teal);
+        }
+
+        @media (max-width: 768px) {
+            .ai-panel { width: 94%; left: 3%; bottom: 85px; height: 75vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- البنر الإعلاني والتنبيهي -->
+    <div id="siteBanner" class="site-banner banner-warning" style="display:none;">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+            <i class="fas fa-bullhorn" id="bannerIcon"></i>
+            <span id="bannerText">تنبيه مناوبة عامة: يرجى التحقق من أجهزة الإنعاش ومطابقة الفرز الفوري.</span>
+        </div>
+        <button class="menu-btn" style="width:28px; height:28px; font-size:0.85rem; color:inherit; background:none; border:none;" onclick="dismissBanner()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- الشريط العلوي -->
+    <header>
+        <div class="header-right">
+            <button class="menu-btn" onclick="toggleSidebar()" aria-label="القائمة">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="brand-title">
+                <i class="fas fa-heart-pulse"></i>
+                <h1 id="headerWardTitle">منظومة الطبيب الذكي الشاملة</h1>
+            </div>
+        </div>
+        <div class="header-left">
+            <span class="badge-live" id="aiStatusBadge">العميل السريري الذكي نشط</span>
+        </div>
+    </header>
+
+    <!-- القائمة الجانبية الديناميكية -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 style="color:#38bdf8; font-size:1.05rem;"><i class="fas fa-hospital-user"></i> الأقسام السريرية</h3>
+            <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="sidebar-menu" id="dynamicSidebarMenu"></ul>
+    </div>
+
+    <!-- مساحة العمل والمحتوى الرئيسي -->
+    <main>
+
+        <!-- 1. أداة فرز مرضى الطوارئ ESI -->
+        <section id="tab-er-triage" class="tab-content active">
+            <div class="page-header-row">
+                <div>
+                    <h2 style="font-size:1.35rem; color:var(--secondary); font-weight:800;">وحدة فرز مرضى الطوارئ (Emergency AI Triage - ESI)</h2>
+                    <p style="color:var(--text-muted); font-size:0.88rem;">تصنيف وفرز فوري للمرضى من قبل الذكاء الاصطناعي طبقاً لمعايير الخطورة العالمية</p>
+                </div>
+                <button class="btn btn-rose" onclick="openTriageModal()"><i class="fas fa-triangle-exclamation"></i> فرز مريض طوارئ جديد</button>
+            </div>
+
+            <div class="form-grid-3" style="margin-bottom:1.2rem;">
+                <div style="background:#fee2e2; border:1px solid #fca5a5; padding:1rem; border-radius:12px; text-align:center;">
+                    <div style="font-size:1.6rem; font-weight:800; color:#b91c1c;" id="triageCountRed">0</div>
+                    <div style="font-size:0.82rem; font-weight:800; color:#991b1b;">المستوى 1 (إنعاش فوري مهدد للحياة)</div>
+                </div>
+                <div style="background:#ffedd5; border:1px solid #fdba74; padding:1rem; border-radius:12px; text-align:center;">
+                    <div style="font-size:1.6rem; font-weight:800; color:#c2410c;" id="triageCountOrange">0</div>
+                    <div style="font-size:0.82rem; font-weight:800; color:#9a3412;">المستوى 2 (طارئ حرج &lt; 15 دقيقة)</div>
+                </div>
+                <div style="background:#fef9c3; border:1px solid #fde047; padding:1rem; border-radius:12px; text-align:center;">
+                    <div style="font-size:1.6rem; font-weight:800; color:#a16207;" id="triageCountYellow">0</div>
+                    <div style="font-size:0.82rem; font-weight:800; color:#854d0e;">المستوى 3 (حاد ومستقر نسبياً)</div>
+                </div>
+            </div>
+
+            <div class="patients-grid" id="erTriageContainer"></div>
+        </section>
+
+        <!-- 2. وحدة إدارة مرضى الغسل الكلوي والتقييم الذكي -->
+        <section id="tab-hd-patients" class="tab-content">
+            <div class="page-header-row">
+                <div>
+                    <h2 style="font-size:1.35rem; color:var(--secondary); font-weight:800;">وحدة إدارة مرضى الغسل الكلوي (Hemodialysis Unit)</h2>
+                    <p style="color:var(--text-muted); font-size:0.88rem;">متابعة مرضى الغسل، تعديل التحاليل والفحوصات، وتصفح كافة البروتوكولات السريرية</p>
+                </div>
+                <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+                    <button class="btn btn-secondary" onclick="openHDProtocolsModal()"><i class="fas fa-book-medical"></i> عرض بروتوكولات وطوارئ الغسل الشاملة</button>
+                    <button class="btn btn-teal" onclick="openHDPatientModal()"><i class="fas fa-plus-circle"></i> إضافة مريض غسل كلوي</button>
+                </div>
+            </div>
+            <div class="patients-grid" id="hdPatientsContainer"></div>
+        </section>
+
+        <!-- 3. سجلات مرضى الردهة -->
+        <section id="tab-patients" class="tab-content">
+            <div class="page-header-row">
+                <div>
+                    <h2 style="font-size:1.35rem; color:var(--secondary); font-weight:800;">سجلات مرضى الردهة والأقسام</h2>
+                    <p style="color:var(--text-muted); font-size:0.88rem;">الملفات الطبية النشطة مع العرض الأساسي والتقييم السريري</p>
+                </div>
+                <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+                    <button class="btn btn-success" onclick="triggerAIPatientsAudit()"><i class="fas fa-microchip"></i> تدقيق الذكاء السريري الشامل</button>
+                    <button class="btn" onclick="openPatientModal()"><i class="fas fa-user-plus"></i> إضافة مريض جديد</button>
+                </div>
+            </div>
+            <div class="patients-grid" id="patientsContainer"></div>
+        </section>
+
+        <!-- 4. حاسبة جرعات الأطفال بالوزن -->
+        <section id="tab-peds" class="tab-content">
+            <div class="card-container">
+                <h2><i class="fas fa-baby" style="color:var(--accent-green);"></i> Pediatric Dose & Volume Calculator (Calculated by Weight)</h2>
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:var(--radius-lg); padding:1.5rem;">
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label>Patient Weight (kg):</label>
+                            <input type="number" id="peds-weight" min="1" max="60" placeholder="e.g. 14" oninput="calculatePediatricDose()">
+                        </div>
+                        <div class="form-field">
+                            <label>Select Medication:</label>
+                            <select id="peds-drug-select" onchange="calculatePediatricDose()"></select>
+                        </div>
+                        <div class="form-field">
+                            <label>Estimated Child Age (Optional):</label>
+                            <input type="text" id="peds-age" placeholder="e.g. 2 years">
+                        </div>
+                    </div>
+                    <div id="pedsResultOutput" style="display:none; margin-top:1.2rem; background:#fff; padding:1.2rem; border-radius:10px; border:1px solid #86efac;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. دليل أدوية الطوارئ الشامل -->
+        <section id="tab-er-drugs" class="tab-content">
+            <div class="card-container">
+                <h2><i class="fas fa-pills" style="color:var(--primary);"></i> Emergency & Resuscitation Formulary (English Monographs)</h2>
+                <div class="search-bar-box">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="erDrugSearch" placeholder="Search Emergency Drugs by Generic, Brand, or Indication..." oninput="filterERDrugsLive()">
+                    </div>
+                </div>
+                <div class="meds-grid" id="erDrugsGrid"></div>
+            </div>
+        </section>
+
+        <!-- 6. صيدلية العراق -->
+        <section id="tab-iraqi-rx" class="tab-content">
+            <div class="card-container">
+                <h2><i class="fas fa-prescription-bottle-medical" style="color:var(--accent-purple);"></i> Iraqi Pharmacy Formulary (Private & Kimadia Sectors)</h2>
+                <div class="search-bar-box">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="iraqiRxSearch" placeholder="Search Iraqi commercial brands (Panadol, Concor, Augmentin, Klacid)..." oninput="filterIraqiDrugsLive()">
+                    </div>
+                </div>
+                <div class="meds-grid" id="iraqiMedsGrid"></div>
+            </div>
+        </section>
+
+        <!-- 7. موانع أكتيليز (معربة بالكامل مع إمكانية التعديل) -->
+        <section id="tab-actilyse" class="tab-content">
+            <div class="card-container">
+                <div class="page-header-row" style="margin-bottom:0.8rem;">
+                    <div>
+                        <h2><i class="fas fa-ban" style="color:var(--accent-red);"></i> قائمة التحقق من موانع إعطاء مذيب التخثر أكتيليز (Alteplase)</h2>
+                        <p style="color:var(--text-muted); font-size:0.86rem;">ضع علامة (نعم / لا) أمام المعايير لحساب النتيجة الفورية. يمكنك إضافة وحذف الموانع من لوحة الإدارة.</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="resetActilyseChecklist()"><i class="fas fa-rotate-left"></i> إعادة ضبط القائمة</button>
+                </div>
+
+                <h3 style="color:var(--accent-red); font-size:0.98rem; margin:1rem 0 0.5rem 0;"><i class="fas fa-circle-xmark"></i> 1. الموانع المطلقة (Absolute Contraindications) - وجود أي منها يمنع الدواء نهائياً:</h3>
+                <div id="actilyseAbsoluteList"></div>
+
+                <h3 style="color:var(--accent-amber); font-size:0.98rem; margin:1.3rem 0 0.5rem 0;"><i class="fas fa-triangle-exclamation"></i> 2. الموانع النسبية (Relative Contraindications) - تستوجب موازنة الفائدة والخطر:</h3>
+                <div id="actilyseRelativeList"></div>
+
+                <div id="actilyseDecision" class="decision-banner decision-safe"></div>
+            </div>
+        </section>
+
+        <!-- 8. معايير مفراس الرأس (معربة بالكامل) -->
+        <section id="tab-head-ct" class="tab-content">
+            <div class="card-container">
+                <div class="page-header-row" style="margin-bottom:0.8rem;">
+                    <div>
+                        <h2><i class="fas fa-x-ray" style="color:var(--primary);"></i> معايير مفراس الرأس الكندية (Canadian CT Head Rule)</h2>
+                        <p style="color:var(--text-muted); font-size:0.86rem;">مخصصة لمرضى إصابات الرأس البسيطة (GCS 13-15). يمكنك إضافة معايير جديدة من لوحة الإدارة.</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="resetCTChecklist()"><i class="fas fa-rotate-left"></i> إعادة ضبط</button>
+                </div>
+
+                <h3 style="color:var(--accent-red); font-size:0.95rem; margin-bottom:0.5rem;">أولاً: معايير الخطورة العالية (تتطلب تدخل جراحي عصبي عاجل):</h3>
+                <div id="ctHighRiskList"></div>
+
+                <h3 style="color:var(--accent-amber); font-size:0.95rem; margin:1.2rem 0 0.5rem 0;">ثانياً: معايير الخطورة المتوسطة (اشتباه آفة دماغية رضية):</h3>
+                <div id="ctMediumRiskList"></div>
+
+                <div id="ctDecision" class="decision-banner decision-safe"></div>
+            </div>
+        </section>
+
+        <!-- 9. حاسبة كلاسكو للغيبوبة GCS (معربة بالكامل) -->
+        <section id="tab-gcs" class="tab-content">
+            <div class="card-container">
+                <h2><i class="fas fa-brain" style="color:var(--primary);"></i> مقياس كلاسكو للغيبوبة (Glasgow Coma Scale - GCS)</h2>
+                <div class="form-grid-3">
+                    <div class="form-field">
+                        <label>استجابة فتح العينين (Eye Opening - E):</label>
+                        <select id="calc-gcs-e" onchange="runGCSCalculation()">
+                            <option value="4">عفوي وتلقائي (Spontaneous) - 4</option>
+                            <option value="3">استجابة للنداء أو الأمر الصوتي (To Sound) - 3</option>
+                            <option value="2">استجابة للمنبه المؤلم أو الضغط (To Pressure) - 2</option>
+                            <option value="1">لا توجد استجابة إطلاقاً (None) - 1</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>الاستجابة اللفظية والكلام (Verbal - V):</label>
+                        <select id="calc-gcs-v" onchange="runGCSCalculation()">
+                            <option value="5">واعٍ ومنسق الحديث بالكامل (Oriented) - 5</option>
+                            <option value="4">مشوش ومرتبك لكنه يجيب (Confused) - 4</option>
+                            <option value="3">كلمات غير ملائمة وغير مترابطة (Inappropriate Words) - 3</option>
+                            <option value="2">أصوات وأنين غير مفهوم (Incomprehensible Sounds) - 2</option>
+                            <option value="1">لا توجد استجابة لفظية (None) - 1</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>الاستجابة الحركية (Motor - M):</label>
+                        <select id="calc-gcs-m" onchange="runGCSCalculation()">
+                            <option value="6">يمتثل وينفذ الأوامر الحركية (Obeys Commands) - 6</option>
+                            <option value="5">يحدد موضع الألم بدقة ويزيله (Localises Pain) - 5</option>
+                            <option value="4">انسحاب انثنائي طبيعي من الألم (Normal Flexion) - 4</option>
+                            <option value="3">انثناء شاذ / تيبس قشري مخي (Decorticate) - 3</option>
+                            <option value="2">انبساط شاذ وتمديد / تيبس جذع الدماغ (Decerebrate) - 2</option>
+                            <option value="1">لا توجد حركة مطلقاً (None) - 1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="decision-banner decision-safe" id="gcsResultBanner">
+                    <i class="fas fa-info-circle" style="font-size:1.5rem;"></i>
+                    <div>
+                        <strong>المجموع الكلي: <span id="gcsScoreVal" style="font-size:1.4rem;">15 / 15</span></strong>
+                        <p id="gcsActionText">حالة عصبية طبيعية ووعي كامل (GCS 13-15).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. حاسبة Heart Score (معربة بالكامل) -->
+        <section id="tab-heart" class="tab-content">
+            <div class="card-container">
+                <h2><i class="fas fa-heart-pulse" style="color:var(--accent-red);"></i> مقياس HEART Score لتقييم آلام الصدر الإقفارية</h2>
+                <div class="form-grid-3">
+                    <div class="form-field">
+                        <label>التاريخ المرضي والقصة السريرية (History):</label>
+                        <select id="hs-h" onchange="runHeartCalculation()">
+                            <option value="0">غير مشتبه به أو وصفي طفيفاً (Slightly / Non-suspicious) - 0</option>
+                            <option value="1">مشتبه به باعتدال (Moderately suspicious) - 1</option>
+                            <option value="2">عالي الشبهة بالخناق الإقفاري الحاد (Highly suspicious) - 2</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>تخطيط القلب (ECG):</label>
+                        <select id="hs-e" onchange="runHeartCalculation()">
+                            <option value="0">تخطيط طبيعي تماماً (Normal) - 0</option>
+                            <option value="1">تغيرات غير نوعية في إعادة الاستقطاب / LBBB قديم - 1</option>
+                            <option value="2">انخفاض ملحوظ في قطعة ST دون ارتفاع صريح - 2</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>عمر المريض (Age):</label>
+                        <select id="hs-a" onchange="runHeartCalculation()">
+                            <option value="0">أقل من 45 سنة - 0</option>
+                            <option value="1">بين 45 و 64 سنة - 1</option>
+                            <option value="2">65 سنة فما فوق - 2</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>عوامل الخطورة (السكري، الضغط، التدخين، الدهون، السمنة):</label>
+                        <select id="hs-r" onchange="runHeartCalculation()">
+                            <option value="0">لا توجد عوامل خطورة مسجلة - 0</option>
+                            <option value="1">عامل أو عاملان للخطورة - 1</option>
+                            <option value="2">3 عوامل فأكثر أو سوابق جلطات وشبكات تاجية - 2</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>التروبونين الأولي (Initial Troponin):</label>
+                        <select id="hs-t" onchange="runHeartCalculation()">
+                            <option value="0">أقل من الحد الطبيعي المعياري - 0</option>
+                            <option value="1">أعلى من الطبيعي بمقدار 1 إلى 2 ضعف - 1</option>
+                            <option value="2">أعلى من الطبيعي بأكثر من ضعفين (>2x) - 2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="decision-banner decision-safe" id="heartResultBanner">
+                    <i class="fas fa-heart-circle-check" style="font-size:1.5rem;"></i>
+                    <div>
+                        <strong>المجموع الكلي: <span id="heartScoreVal" style="font-size:1.4rem;">0 / 10</span></strong>
+                        <p id="heartActionText">خطورة منخفضة (0-3): نسبة الاختلاطات القلبية 1.7%. إمكانية التخريج الآمن مع المتابعة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. لوحة الإدارة الشاملة الفائقة -->
+        <section id="tab-admin" class="tab-content">
+            <div id="adminLockScreen" class="lock-screen-box">
+                <i class="fas fa-shield-halved" style="font-size:3rem; color:var(--primary); margin-bottom:1rem;"></i>
+                <h3 style="font-size:1.2rem; color:var(--secondary); font-weight:800;">لوحة التحكم والإدارة المركزية</h3>
+                <p style="color:var(--text-muted); font-size:0.86rem; margin-top:0.3rem;">أدخل الرمز السري للتحكم الكامل بالموقع (الرمز الافتراضي: 1234)</p>
+                <input type="password" id="adminPinInput" class="pin-input" maxlength="8" placeholder="••••" onkeypress="if(event.key === 'Enter') checkAdminPin()">
+                <div id="pinErrorMsg" style="color:var(--accent-red); font-weight:700; font-size:0.84rem; display:none; margin-bottom:0.8rem;">الرمز السري غير صحيح! يرجى إعادة المحاولة.</div>
+                <button class="btn" style="width:100%; justify-content:center;" onclick="checkAdminPin()"><i class="fas fa-unlock"></i> فتح لوحة الإدارة</button>
+            </div>
+
+            <div id="adminUnlockedContent" style="display:none;">
+                <div class="card-container">
+                    <div class="page-header-row" style="margin-bottom:1.2rem;">
+                        <div>
+                            <h2><i class="fas fa-gears" style="color:var(--primary);"></i> لوحة التحكم الشاملة بالنظام</h2>
+                            <p style="color:var(--text-muted); font-size:0.86rem;">تخصيص كامل للموقع، إدارة البنرات، موانع أكتيليز، معايير المفراس، والذكاء الاصطناعي</p>
+                        </div>
+                        <button class="btn btn-secondary" onclick="lockAdminPanel()"><i class="fas fa-lock"></i> قفل اللوحة</button>
+                    </div>
+
+                    <div class="admin-nav-bar">
+                        <button class="admin-nav-btn active" onclick="switchAdminPane('pane-banner')"><i class="fas fa-bullhorn"></i> البنرات والإعلانات</button>
+                        <button class="admin-nav-btn" onclick="switchAdminPane('pane-customizer')"><i class="fas fa-palette"></i> تخصيص الأسماء والترتيب</button>
+                        <button class="admin-nav-btn" onclick="switchAdminPane('pane-ai')"><i class="fas fa-robot"></i> الذكاء الاصطناعي والربط الخارجي</button>
+                        <button class="admin-nav-btn" onclick="switchAdminPane('pane-actilyse-admin')"><i class="fas fa-ban"></i> إدارة موانع أكتيليز</button>
+                        <button class="admin-nav-btn" onclick="switchAdminPane('pane-ct-admin')"><i class="fas fa-x-ray"></i> إدارة معايير المفراس</button>
+                        <button class="admin-nav-btn" onclick="switchAdminPane('pane-drugs')"><i class="fas fa-pills"></i> إضافة الأدوية وحاسبة الأطفال</button>
+                        <button class="admin-nav-btn" onclick="switchAdminPane('pane-db')"><i class="fas fa-database"></i> تصفير وحذف المرضى</button>
+                        <button class="admin-nav-btn" onclick="switchAdminPane('pane-pin')"><i class="fas fa-key"></i> تغيير رمز PIN</button>
+                    </div>
+
+                    <!-- 1. البنرات -->
+                    <div id="pane-banner" class="admin-section-pane active">
+                        <div class="section-bar"><i class="fas fa-bullhorn"></i> إدارة البنر التنبيهي والإعلاني أعلى الموقع</div>
+                        <form onsubmit="saveBannerConfig(event)">
+                            <div class="form-grid-3">
+                                <div class="form-field full">
+                                    <label>نص البنر / الإعلان العام:</label>
+                                    <input type="text" id="adminBannerText" required placeholder="مثال: تنبيه مناوبة: انقطاع مؤقت لدواء معين...">
+                                </div>
+                                <div class="form-field">
+                                    <label>نوع البنر ولونه:</label>
+                                    <select id="adminBannerType">
+                                        <option value="banner-warning">تحذير أصفر (Warning)</option>
+                                        <option value="banner-danger">طارئ أحمر (Critical)</option>
+                                        <option value="banner-info">معلومة عامة أزرق (Info)</option>
+                                        <option value="banner-success">إشعار إيجابي أخضر (Success)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label>حالة الظهور:</label>
+                                    <select id="adminBannerActive">
+                                        <option value="true">مفعل وظاهر للجميع</option>
+                                        <option value="false">معطل ومخفي</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> تطبيق وحفظ البنر</button>
+                        </form>
+                    </div>
+
+                    <!-- 2. تخصيص الأسماء والترتيب -->
+                    <div id="pane-customizer" class="admin-section-pane">
+                        <div class="section-bar"><i class="fas fa-pen-to-square"></i> تخصيص اسم الموقع وأسماء وترتيب الأدوات</div>
+                        <div class="form-field" style="margin-bottom:1.2rem;">
+                            <label>اسم الموقع الرئيسي (Header Title):</label>
+                            <div style="display:flex; gap:0.5rem;">
+                                <input type="text" id="adminSiteTitleInput" style="flex-grow:1;">
+                                <button class="btn btn-primary" onclick="saveSiteTitle()"><i class="fas fa-check"></i> حفظ اسم الموقع</button>
+                            </div>
+                        </div>
+                        <h4 style="font-size:0.95rem; font-weight:800; color:var(--secondary); margin-bottom:0.6rem;">ترتيب وتغيير أسماء الأدوات في القائمة الجانبية:</h4>
+                        <div id="toolsReorderList"></div>
+                    </div>
+
+                    <!-- 3. الذكاء الاصطناعي، والربط الخارجي، والإيقاف -->
+                    <div id="pane-ai" class="admin-section-pane">
+                        <div class="section-bar"><i class="fas fa-microchip"></i> ضبط محرك وربط الذكاء الاصطناعي (AI Engine & API Settings)</div>
+                        <div class="form-grid-3">
+                            <div class="form-field">
+                                <label>حالة الذكاء الاصطناعي بالموقع:</label>
+                                <select id="adminAIEnabledSelect" onchange="toggleAIStatusFromAdmin(this.value)">
+                                    <option value="true">مفعل ويعمل بكامل طاقته</option>
+                                    <option value="false">معطل ومخفي تماماً بالموقع</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>نوع المزود (Provider):</label>
+                                <select id="adminAIProviderSelect">
+                                    <option value="local">المحرك السريري الداخلي (بدون إنترنت)</option>
+                                    <option value="gemini">Google Gemini API (حي متطور)</option>
+                                    <option value="custom">مزود خارجي متوافق / OpenAI API</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>مفتاح API Key الخاص بالمزود:</label>
+                                <input type="password" id="adminGeminiApiKeyInput" placeholder="أدخل مفتاح الـ API الخاص بـ Gemini أو غيره...">
+                            </div>
+                            <div class="form-field full">
+                                <label>رابط المزود المخصص (Custom Endpoint URL - اختياري):</label>
+                                <input type="text" id="adminAICustomEndpoint" placeholder="https://api.openai.com/v1/chat/completions">
+                            </div>
+                        </div>
+                        <button class="btn btn-purple" onclick="saveAISettingsFromAdmin()"><i class="fas fa-save"></i> حفظ وتفعيل إعدادات الذكاء الاصطناعي</button>
+                    </div>
+
+                    <!-- 4. إدارة موانع أكتيليز -->
+                    <div id="pane-actilyse-admin" class="admin-section-pane">
+                        <div class="section-bar"><i class="fas fa-ban"></i> إدارة وتعديل موانع مذيب التخثر أكتيليز</div>
+                        <form onsubmit="handleAddActilyseRuleAdmin(event)" style="margin-bottom:1.5rem;">
+                            <div class="form-grid-3">
+                                <div class="form-field">
+                                    <label>نوع المانع:</label>
+                                    <select id="admin-act-type">
+                                        <option value="abs">مانع مطلق (Absolute - يمنع نهائياً)</option>
+                                        <option value="rel">مانع نسبي (Relative - بحذر)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field full">
+                                    <label>نص المانع بالعربي:</label>
+                                    <input type="text" id="admin-act-text" required placeholder="مثال: وجود نزيف داخلي خلال آخر أسبوعين...">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-plus"></i> إضافة مانع جديد لأكتيليز</button>
+                        </form>
+                        <h4 style="font-weight:800; margin-bottom:0.5rem;">الموانع الحالية (انقر للحذف):</h4>
+                        <div id="adminActilyseListManage"></div>
+                    </div>
+
+                    <!-- 5. إدارة معايير مفراس الرأس -->
+                    <div id="pane-ct-admin" class="admin-section-pane">
+                        <div class="section-bar"><i class="fas fa-x-ray"></i> إدارة وتعديل معايير مفراس الرأس (CT Brain)</div>
+                        <form onsubmit="handleAddCTRuleAdmin(event)" style="margin-bottom:1.5rem;">
+                            <div class="form-grid-3">
+                                <div class="form-field">
+                                    <label>مستوى الخطورة:</label>
+                                    <select id="admin-ct-type">
+                                        <option value="high">خطورة عالية (High Risk - يتطلب CT فوراً)</option>
+                                        <option value="med">خطورة متوسطة (Medium Risk - يوصى بالـ CT)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field full">
+                                    <label>نص المعيار بالعربي:</label>
+                                    <input type="text" id="admin-ct-text" required placeholder="مثال: نوبة تشنج صرعي بعد الضربة مباشرة...">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> إضافة معيار جديد للمفراس</button>
+                        </form>
+                        <h4 style="font-weight:800; margin-bottom:0.5rem;">المعايير الحالية (انقر للحذف):</h4>
+                        <div id="adminCTListManage"></div>
+                    </div>
+
+                    <!-- 6. إضافة الأدوية -->
+                    <div id="pane-drugs" class="admin-section-pane">
+                        <div class="section-bar"><i class="fas fa-plus-circle"></i> إضافة دواء جديد (حاسبة الأطفال، الطوارئ، صيدلية العراق)</div>
+                        <form onsubmit="handleUniversalAddDrugSubmit(event)">
+                            <div class="form-grid-3">
+                                <div class="form-field">
+                                    <label>القسم الهدف:</label>
+                                    <select id="admin-drug-dest" onchange="togglePediatricFormFields()">
+                                        <option value="peds">حاسبة جرعات الأطفال</option>
+                                        <option value="er">أدوية الطوارئ</option>
+                                        <option value="iraqi">صيدلية العراق</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label>Generic Name (English):</label>
+                                    <input type="text" id="admin-drug-generic" required placeholder="e.g. Cefotaxime Sodium">
+                                </div>
+                                <div class="form-field">
+                                    <label>Brand Name (English):</label>
+                                    <input type="text" id="admin-drug-brand" required placeholder="e.g. Claforan">
+                                </div>
+                                <div class="form-field">
+                                    <label>Drug Category (Manual Entry):</label>
+                                    <input type="text" id="admin-drug-category" required placeholder="e.g. Cephalosporin">
+                                </div>
+                                <div class="form-field">
+                                    <label>Dosage Forms:</label>
+                                    <input type="text" id="admin-drug-forms" required placeholder="e.g. 1g IV Vial">
+                                </div>
+                                <div class="form-field">
+                                    <label>Adult Dose:</label>
+                                    <input type="text" id="admin-drug-dose" required placeholder="e.g. 1 - 2 g IV q8h">
+                                </div>
+                            </div>
+
+                            <div id="pedsSpecificFields" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:1.2rem; border-radius:10px; margin-bottom:1rem;">
+                                <h4 style="color:#166534; font-size:0.95rem; margin-bottom:0.75rem;"><i class="fas fa-calculator"></i> Pediatric Formula Parameters:</h4>
+                                <div class="form-grid-3">
+                                    <div class="form-field">
+                                        <label>Dose in mg/kg:</label>
+                                        <input type="number" step="0.01" id="admin-peds-mgkg" placeholder="e.g. 50">
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Concentration: mg per unit:</label>
+                                        <input type="number" step="0.1" id="admin-peds-concmg" placeholder="e.g. 250">
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Concentration: per ml:</label>
+                                        <input type="number" step="0.1" id="admin-peds-concml" placeholder="e.g. 5">
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Frequency & Schedule:</label>
+                                        <input type="text" id="admin-peds-frequency" placeholder="e.g. Every 8 hours">
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Max Dose (mg):</label>
+                                        <input type="number" id="admin-peds-maxdose" placeholder="e.g. 2000">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-3">
+                                <div class="form-field full">
+                                    <label>Clinical Indications (English):</label>
+                                    <textarea id="admin-drug-indications" rows="2" required></textarea>
+                                </div>
+                                <div class="form-field full">
+                                    <label>Contraindications & Warnings (English):</label>
+                                    <textarea id="admin-drug-contra" rows="2" required></textarea>
+                                </div>
+                                <div class="form-field full">
+                                    <label>Counseling & Guidance (English):</label>
+                                    <textarea id="admin-drug-counseling" rows="2" required></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> حفظ وتفعيل الدواء</button>
+                        </form>
+                    </div>
+
+                    <!-- 7. تصفير قواعد البيانات -->
+                    <div id="pane-db" class="admin-section-pane">
+                        <div class="section-bar" style="color:var(--accent-red);"><i class="fas fa-trash-can"></i> حذف وتصفير بيانات المرضى</div>
+                        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+                            <button class="btn btn-danger" onclick="wipePatients('ward')"><i class="fas fa-bed-pulse"></i> حذف مرضى الردهة</button>
+                            <button class="btn btn-danger" onclick="wipePatients('triage')"><i class="fas fa-truck-medical"></i> حذف مرضى فرز الطوارئ</button>
+                            <button class="btn btn-danger" onclick="wipePatients('dialysis')"><i class="fas fa-droplet"></i> حذف مرضى الغسل الكلوي</button>
+                            <button class="btn btn-rose" onclick="wipeAllSystemData()"><i class="fas fa-radiation"></i> تصفير شامل للنظام (Factory Reset)</button>
+                        </div>
+                    </div>
+
+                    <!-- 8. تغيير PIN -->
+                    <div id="pane-pin" class="admin-section-pane">
+                        <div class="section-bar"><i class="fas fa-key"></i> تغيير رمز PIN للوحة الإدارة</div>
+                        <form onsubmit="handleChangePin(event)">
+                            <div class="form-grid-3">
+                                <div class="form-field">
+                                    <label>الرمز الحالي:</label>
+                                    <input type="password" id="oldPinInput" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>الرمز الجديد:</label>
+                                    <input type="password" id="newPinInput" required maxlength="8">
+                                </div>
+                                <div class="form-field">
+                                    <label>تأكيد الرمز الجديد:</label>
+                                    <input type="password" id="confirmNewPinInput" required maxlength="8">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-purple"><i class="fas fa-lock"></i> تحديث الرمز</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- مودال فرز مريض طوارئ ESI -->
+    <div class="modal" id="triageModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 style="font-size:1.1rem; color:var(--secondary); font-weight:800;"><i class="fas fa-truck-medical" style="color:var(--accent-rose);"></i> إضافة وفرز مريض طوارئ ذكي (AI Triage)</h3>
+                <button class="menu-btn" style="color:var(--secondary); border:none; background:none;" onclick="closeTriageModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content">
+                <form id="triageForm" onsubmit="handleTriageSubmit(event)">
+                    <div class="section-bar"><i class="fas fa-id-card"></i> بيانات المريض والشكوى الرئيسية</div>
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label>اسم المصاب:</label>
+                            <input type="text" id="tr-name" required>
+                        </div>
+                        <div class="form-field">
+                            <label>العمر:</label>
+                            <input type="number" id="tr-age" required>
+                        </div>
+                        <div class="form-field full">
+                            <label style="color:#b91c1c; font-weight:800;">الشكوى الرئيسية (Chief Complaint):</label>
+                            <input type="text" id="tr-cc" required>
+                        </div>
+                    </div>
+                    <div class="section-bar"><i class="fas fa-heart-pulse"></i> الفعاليات الحيوية (Vitals)</div>
+                    <div class="form-grid-3">
+                        <div class="form-field"><label>ضغط الدم (BP):</label><input type="text" id="tr-bp" required></div>
+                        <div class="form-field"><label>النبض (HR):</label><input type="number" id="tr-hr" required></div>
+                        <div class="form-field"><label>التنفس (RR):</label><input type="number" id="tr-rr" required></div>
+                        <div class="form-field"><label>الأكسجين (SpO2 %):</label><input type="number" id="tr-spo2" required></div>
+                        <div class="form-field"><label>درجة الوعي (GCS):</label><input type="number" id="tr-gcs" min="3" max="15" required></div>
+                        <div class="form-field"><label>الألم (1-10):</label><input type="number" id="tr-pain" min="0" max="10" required></div>
+                    </div>
+                    <div class="section-bar"><i class="fas fa-triangle-exclamation"></i> علامات الخطورة الوشيكة</div>
+                    <div class="form-field full">
+                        <select id="tr-redflags">
+                            <option value="none">لا توجد علامات خطورة وشيكة</option>
+                            <option value="cardiac_arrest">توقف قلب / تنفس وشيك</option>
+                            <option value="shock_lethal">علامات صدمة حادة وهبوط ضغط</option>
+                            <option value="chest_stemi">ألم صدري وصفي لجلطة قلبية</option>
+                            <option value="stroke_focal">سكتة دماغية حادة خلال النافذة الزمنية</option>
+                        </select>
+                    </div>
+                    <div class="modal-foot" style="padding:1rem 0 0 0; background:none;">
+                        <button type="button" class="btn btn-secondary" onclick="closeTriageModal()">إلغاء</button>
+                        <button type="submit" class="btn btn-rose"><i class="fas fa-brain"></i> الفرز والتصنيف الفوري</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال إضافة وتعديل مريض غسل كلوي (مع التحاليل الكاملة) -->
+    <div class="modal" id="hdPatientModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="hdModalTitle" style="font-size:1.1rem; color:var(--secondary); font-weight:800;"><i class="fas fa-droplet" style="color:var(--accent-teal);"></i> إضافة مريض لوحدة الغسل الكلوي</h3>
+                <button class="menu-btn" style="color:var(--secondary); border:none; background:none;" onclick="closeHDPatientModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content">
+                <form id="hdPatientForm" onsubmit="handleHDPatientSubmit(event)">
+                    <input type="hidden" id="hd-edit-id">
+                    <div class="section-bar"><i class="fas fa-id-card"></i> البيانات الأساسية والجدولة</div>
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label>اسم المريض:</label>
+                            <input type="text" id="hd-name" required>
+                        </div>
+                        <div class="form-field">
+                            <label>جدول الغسل (Schedule):</label>
+                            <select id="hd-schedule">
+                                <option value="السبت - الاثنين - الأربعاء (Shift 1)">السبت - الاثنين - الأربعاء (صباحي)</option>
+                                <option value="السبت - الاثنين - الأربعاء (Shift 2)">السبت - الاثنين - الأربعاء (مسائي)</option>
+                                <option value="الأحد - الثلاثاء - الخميس (Shift 1)">الأحد - الثلاثاء - الخميس (صباحي)</option>
+                                <option value="الأحد - الثلاثاء - الخميس (Shift 2)">الأحد - الثلاثاء - الخميس (مسائي)</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>مخرج الغسل (Vascular Access):</label>
+                            <select id="hd-access">
+                                <option value="AV Fistula (شرياني وريدي طبيعي)">AV Fistula (طبيعي)</option>
+                                <option value="AV Graft (وصلة صناعية)">AV Graft (صناعي)</option>
+                                <option value="Permcath (قسطرة دائمية)">Permcath (دائمية)</option>
+                                <option value="Temporary CVC (قسطرة مؤقتة)">Temporary CVC (مؤقتة)</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>الوزن الجاف المستهدف (Dry Weight kg):</label>
+                            <input type="number" step="0.1" id="hd-dryweight" required>
+                        </div>
+                        <div class="form-field">
+                            <label>الوزن الحالي قبل الغسل (Pre-HD Weight kg):</label>
+                            <input type="number" step="0.1" id="hd-preweight" required>
+                        </div>
+                        <div class="form-field">
+                            <label>ضغط الدم الحالي (Pre-HD BP):</label>
+                            <input type="text" id="hd-bp" required>
+                        </div>
+                    </div>
+
+                    <div class="section-bar"><i class="fas fa-vial"></i> نتائج التحاليل المخبرية الحديثة (قابلة للتعديل دائماً)</div>
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label>البوتاسيوم (Serum K+ mmol/L):</label>
+                            <input type="number" step="0.1" id="hd-k" required>
+                        </div>
+                        <div class="form-field">
+                            <label>اليوريا (Urea / BUN mg/dL):</label>
+                            <input type="number" id="hd-urea" required>
+                        </div>
+                        <div class="form-field">
+                            <label>الكرياتينين (Creatinine mg/dL):</label>
+                            <input type="number" step="0.1" id="hd-cr" required>
+                        </div>
+                        <div class="form-field">
+                            <label>الهيموجلوبين (Hb g/dL):</label>
+                            <input type="number" step="0.1" id="hd-hb" required>
+                        </div>
+                        <div class="form-field">
+                            <label>الكالسيوم (Serum Ca mg/dL):</label>
+                            <input type="number" step="0.1" id="hd-ca" required>
+                        </div>
+                        <div class="form-field">
+                            <label>الفوسفور (Serum PO4 mg/dL):</label>
+                            <input type="number" step="0.1" id="hd-po4" required>
+                        </div>
+                    </div>
+                    <div class="modal-foot" style="padding:1rem 0 0 0; background:none;">
+                        <button type="button" class="btn btn-secondary" onclick="closeHDPatientModal()">إلغاء</button>
+                        <button type="submit" class="btn btn-teal"><i class="fas fa-save"></i> حفظ وتحديث بيانات المريض</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال عرض بروتوكولات وطوارئ الغسل الشاملة -->
+    <div class="modal" id="hdProtocolsModal">
+        <div class="modal-box" style="max-width:850px;">
+            <div class="modal-head">
+                <h3 style="font-size:1.1rem; color:var(--secondary); font-weight:800;"><i class="fas fa-book-medical" style="color:var(--accent-teal);"></i> بروتوكولات وطوارئ الغسل الكلوي والأعراض وعلاجها</h3>
+                <button class="menu-btn" style="color:var(--secondary); border:none; background:none;" onclick="closeHDProtocolsModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content">
+                <div class="hd-protocol-item">
+                    <h4 style="color:#b91c1c; font-weight:800;"><i class="fas fa-heart-crack"></i> 1. هبوط الضغط أثناء الغسل (Intradialytic Hypotension - IDH):</h4>
+                    <p><strong>الأعراض المتوقعة:</strong> دوخة، تثاؤب متكرر، غثيان، تشنج عضلي، تعرق بارد، هبوط SBP بأكثر من 20 mmHg.</p>
+                    <p><strong>العلاج الفوري:</strong> إيقاف السحب فوراً (UF Rate = 0)، وضع المريض بوضعية ترندلنبورغ (رفع الساقين)، خفض سرعة المضخة BFR إلى 100-150 ml/min، وإعطاء بولس محلول ملحي 0.9% Normal Saline بمقدار 100-200 ml. يمكن إعطاء Midodrine قبل الجلسة للحالات المزمنة.</p>
+                </div>
+                <div class="hd-protocol-item">
+                    <h4 style="color:#c2410c; font-weight:800;"><i class="fas fa-bolt"></i> 2. ارتفاع الضغط المتناقض أثناء الغسل (Intradialytic Hypertension):</h4>
+                    <p><strong>الأعراض المتوقعة:</strong> صداع شديد، احمرار الوجه، ضيق تنفس، ارتفاع الضغط رغم استمرار سحب السوائل.</p>
+                    <p><strong>العلاج الفوري:</strong> التحقق من عدم وجود فرط حمل سوائلي خفي أو تحفيز نظام الرينين، تجنب النزول الحاد السريع بالضغط تجنباً للجلطة الدماغية، إعطاء Labetalol 10-20 mg وريدياً ببطء أو Carvedilol فموياً.</p>
+                </div>
+                <div class="hd-protocol-item">
+                    <h4 style="color:#7e22ce; font-weight:800;"><i class="fas fa-brain"></i> 3. متلازمة اختلال التوازن (Dialysis Disequilibrium Syndrome - DDS):</h4>
+                    <p><strong>الأعراض المتوقعة:</strong> صداع نابض، غثيان وقيء، هياج وارتباك، وفي الحالات الشديدة تشنجات صرعية وغيبوبة نتيجة وذمة الدماغ الحادة.</p>
+                    <p><strong>العلاج الفوري:</strong> إيقاف الجلسة فوراً، تأمين مجرى التنفس، إعطاء Mannitol 20% (0.5-1 g/kg IV) أو محلول ملحي عالي التركيز Hypertonic Saline 3% (100 ml IV على 15 دقيقة) لسحب السوائل من الدماغ، وإعطاء Diazepam للتشنجات.</p>
+                </div>
+                <div class="hd-protocol-item">
+                    <h4 style="color:#b45309; font-weight:800;"><i class="fas fa-person-falling"></i> 4. تشنجات العضلات الحادة (Muscle Cramps):</h4>
+                    <p><strong>الأعراض المتوقعة:</strong> تقلص مؤلم وشديد في عضلات الساقين وأسفل القدمين نتيجة السحب السريع للترشيح الفائق.</p>
+                    <p><strong>العلاج الفوري:</strong> تقليل أو إيقاف السحب مؤقتاً، إعطاء 100 ml Normal Saline أو 25-50 ml Hypertonic Dextrose 50% (D50W) لرفع الأسمولية، وتدليك لطيف.</p>
+                </div>
+                <div class="hd-protocol-item">
+                    <h4 style="color:#0f766e; font-weight:800;"><i class="fas fa-triangle-exclamation"></i> 5. نزيف مخرج الغسل الحاد (Vascular Access Bleeding):</h4>
+                    <p><strong>الأعراض المتوقعة:</strong> نزيف مستمر أو تدفق دموي من ثقب الإبرة بعد انتزاعها.</p>
+                    <p><strong>العلاج الفوري:</strong> ضغط رقمي مباشر بالأصابع لمدة 15-20 دقيقة، يُمنع منعاً باتاً لف تورنيكيه دائري حول الذراع تجنباً لخثرة الوصلة، وفي حال النزيف الحاد بعد إعطاء الهيبارين يعطى Protamine Sulfate وريدياً.</p>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn btn-secondary" onclick="closeHDProtocolsModal()">إغلاق الدليل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال تفاصيل وتعديل مريض الردهة -->
+    <div class="modal" id="patientModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 id="pModalTitle" style="font-size:1.1rem; color:var(--secondary); font-weight:800;">الملف السريري للمريض</h3>
+                <button class="menu-btn" style="color:var(--secondary); border:none; background:none;" onclick="closePatientModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content">
+                <form id="pForm" onsubmit="saveActivePatient(event)">
+                    <input type="hidden" id="p-form-id">
+                    <div class="form-grid-3">
+                        <div class="form-field"><label>اسم المريض:</label><input type="text" id="p-form-name" required></div>
+                        <div class="form-field"><label>الطبيب المعالج:</label><input type="text" id="p-form-doctor" required></div>
+                        <div class="form-field full"><label style="color:#b45309; font-weight:800;">الشكوى الأساسية:</label><input type="text" id="p-form-cc" required></div>
+                        <div class="form-field"><label>التاريخ المرضي:</label><input type="text" id="p-form-pmhx"></div>
+                        <div class="form-field"><label>التاريخ الجراحي:</label><input type="text" id="p-form-pshx"></div>
+                        <div class="form-field"><label>الضغط:</label><input type="text" id="p-form-bp"></div>
+                        <div class="form-field"><label>الأكسجين:</label><input type="number" id="p-form-spo2"></div>
+                        <div class="form-field"><label>النبض:</label><input type="number" id="p-form-pulse"></div>
+                        <div class="form-field"><label>الحرارة:</label><input type="text" id="p-form-temp"></div>
+                    </div>
+                    <div class="form-grid-3">
+                        <div class="form-field full"><label>التشخيص المحتمل:</label><input type="text" id="p-form-diag"></div>
+                        <div class="form-field full"><label>الأدوية والجرع:</label><textarea id="p-form-meds" rows="2"></textarea></div>
+                        <div class="form-field full"><label>ملاحظات:</label><textarea id="p-form-notes" rows="2"></textarea></div>
+                    </div>
+                    <div class="modal-foot" style="padding:1rem 0 0 0; background:none;">
+                        <button type="button" class="btn btn-danger" id="btnDeleteP" onclick="deleteActivePatient()"><i class="fas fa-trash"></i> حذف</button>
+                        <button type="button" class="btn btn-secondary" onclick="closePatientModal()">إلغاء</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> حفظ الملف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال تفاصيل الدواء -->
+    <div class="modal" id="drugDetailModal">
+        <div class="modal-box" style="max-width:780px;">
+            <div class="modal-head">
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                    <i class="fas fa-capsules" style="color:var(--primary); font-size:1.4rem;"></i>
+                    <h3 id="modalDrugName" style="font-size:1.15rem; color:var(--secondary); font-weight:800;">Clinical Monograph</h3>
+                </div>
+                <button class="menu-btn" style="color:var(--secondary); border:none; background:none;" onclick="closeDrugDetailModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content" id="modalDrugBody"></div>
+            <div class="modal-foot">
+                <button type="button" class="btn btn-secondary" onclick="closeDrugDetailModal()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- عميل الذكاء الاصطناعي السريري التفاعلي (يدعم الصوت والربط الخارجي) -->
+    <div class="ai-fab" id="aiMainFabWidget" onclick="toggleAIPanel()" title="العميل السريري الذكي">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <div class="ai-panel" id="aiPanel">
+        <div class="ai-panel-header">
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+                <i class="fas fa-brain" style="color:#38bdf8; font-size:1.3rem;"></i>
+                <div>
+                    <h4 style="font-size:0.95rem; font-weight:800;">العميل السريري الذكي التفاعلي</h4>
+                    <span style="font-size:0.7rem; color:#94a3b8;">يدعم الصوت • ESI • KDIGO • BNF • UpToDate</span>
+                </div>
+            </div>
+            <button class="menu-btn" style="color:#fff; width:30px; height:30px;" onclick="toggleAIPanel()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="ai-patient-context-bar">
+            <i class="fas fa-user-tag" style="color:var(--primary);"></i>
+            <span>المريض:</span>
+            <select id="aiSelectedPatient" onchange="handlePatientContextChange()">
+                <option value="none">-- استشارة طبية عامة --</option>
+            </select>
+        </div>
+
+        <div class="ai-panel-body" id="aiChatBox">
+            <div class="ai-msg bot">
+                مرحباً بك يا دكتور! أنا زميلك الاستشاري السريري الذكي.
+                <br>• يمكنك الكتابة أو الضغط على <strong>زر الميكروفون</strong> للتحدث معي صوتياً مباشرة!
+                <br>• أستطيع فرز مرضى الطوارئ ESI، تدقيق أدوية الردهة، ومراجعة تحاليل الغسل الكلوي وموانع أكتيليز.
+            </div>
+        </div>
+
+        <div class="ai-quick-actions">
+            <button class="quick-action-pill" onclick="sendQuickPrompt('audit_ward')"><i class="fas fa-microchip"></i> تدقيق مرضى الردهة</button>
+            <button class="quick-action-pill" onclick="sendQuickPrompt('audit_hd')"><i class="fas fa-droplet"></i> تدقيق مرضى الغسل</button>
+            <button class="quick-action-pill" onclick="sendQuickPrompt('triage_help')"><i class="fas fa-truck-medical"></i> معايير فرز ESI</button>
+        </div>
+
+        <div class="ai-input-bar">
+            <button class="voice-mic-btn" id="aiVoiceBtn" onclick="toggleVoiceRecognition()" title="اضغط للتحدث بالصوت">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <input type="text" id="aiChatInput" placeholder="تحدث أو اكتب سؤالك السريري..." onkeypress="if(event.key === 'Enter') handleUserSendMessage()">
+            <button class="btn" style="padding:0.55rem 0.9rem;" onclick="handleUserSendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- منطق وتفاعلية JavaScript الكاملة -->
+    <script>
+        /* ========================================================
+           1. إعدادات النظام وتخصيص القائمة والذكاء الاصطناعي
+           ======================================================== */
+        let toolsConfig = JSON.parse(localStorage.getItem('md_tools_config')) || [
+            { id: 'tab-er-triage', title: 'فرز مرضى الطوارئ (AI Triage)', icon: 'fa-truck-medical', visible: true },
+            { id: 'tab-hd-patients', title: 'مرضى الغسل الكلوي (Hemodialysis)', icon: 'fa-droplet', visible: true },
+            { id: 'tab-patients', title: 'سجلات وتقييم مرضى الردهة', icon: 'fa-bed-pulse', visible: true },
+            { id: 'tab-peds', title: 'حاسبة جرعات الأطفال بالوزن', icon: 'fa-baby', visible: true },
+            { id: 'tab-er-drugs', title: 'دليل أدوية الطوارئ الشامل', icon: 'fa-pills', visible: true },
+            { id: 'tab-iraqi-rx', title: 'صيدلية العراق (Iraqi Formulary)', icon: 'fa-prescription-bottle-medical', visible: true },
+            { id: 'tab-actilyse', title: 'موانع دواء أكتيليز (Checklist)', icon: 'fa-ban', visible: true },
+            { id: 'tab-head-ct', title: 'معايير مفراس الرأس (CT Brain)', icon: 'fa-x-ray', visible: true },
+            { id: 'tab-gcs', title: 'حاسبة كلاسكو للغيبوبة (GCS)', icon: 'fa-brain', visible: true },
+            { id: 'tab-heart', title: 'حاسبة Heart Score للصدر', icon: 'fa-heart-pulse', visible: true },
+            { id: 'tab-admin', title: 'لوحة الإدارة والتحكم (محمية)', icon: 'fa-lock', visible: true }
+        ];
+
+        let systemConfig = {
+            adminPin: localStorage.getItem('md_admin_pin') || '1234',
+            wardTitle: localStorage.getItem('md_ward_title') || 'منظومة الطبيب الذكي الشاملة',
+            bannerActive: localStorage.getItem('md_banner_active') !== 'false',
+            bannerText: localStorage.getItem('md_banner_text') || 'تنبيه مناوبة عامة: يرجى التحقق من أجهزة الإنعاش ومطابقة الفرز الفوري.',
+            bannerType: localStorage.getItem('md_banner_type') || 'banner-warning',
+            aiEnabled: localStorage.getItem('md_ai_enabled') !== 'false',
+            aiProvider: localStorage.getItem('md_ai_provider') || 'local',
+            geminiApiKey: localStorage.getItem('md_gemini_key') || '',
+            aiCustomEndpoint: localStorage.getItem('md_ai_custom_endpoint') || ''
+        };
+
+        let isAdminUnlocked = false;
+
+        function renderDynamicSidebar() {
+            const menu = document.getElementById('dynamicSidebarMenu');
+            menu.innerHTML = '';
+            toolsConfig.forEach(tool => {
+                if (tool.visible) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<button onclick="switchTab('${tool.id}')"><i class="fas ${tool.icon}"></i> ${tool.title}</button>`;
+                    menu.appendChild(li);
+                }
+            });
+        }
+
+        function renderToolsReorderManager() {
+            const container = document.getElementById('toolsReorderList');
+            container.innerHTML = '';
+            toolsConfig.forEach((tool, index) => {
+                const item = document.createElement('div');
+                item.className = 'tool-order-item';
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:0.6rem; flex-grow:1;">
+                        <i class="fas ${tool.icon}" style="color:var(--primary); width:20px;"></i>
+                        <input type="text" value="${tool.title}" onchange="updateToolTitle(${index}, this.value)" style="flex-grow:1; padding:0.4rem 0.6rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.4rem;">
+                        <label style="font-size:0.8rem; display:flex; align-items:center; gap:0.3rem;">
+                            <input type="checkbox" ${tool.visible ? 'checked' : ''} onchange="toggleToolVisibility(${index}, this.checked)"> إظهار
+                        </label>
+                        <button class="btn btn-secondary" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="moveTool(${index}, -1)" ${index === 0 ? 'disabled' : ''}><i class="fas fa-arrow-up"></i></button>
+                        <button class="btn btn-secondary" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="moveTool(${index}, 1)" ${index === toolsConfig.length - 1 ? 'disabled' : ''}><i class="fas fa-arrow-down"></i></button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateToolTitle(index, newTitle) {
+            toolsConfig[index].title = newTitle;
+            localStorage.setItem('md_tools_config', JSON.stringify(toolsConfig));
+            renderDynamicSidebar();
+        }
+
+        function toggleToolVisibility(index, isVisible) {
+            toolsConfig[index].visible = isVisible;
+            localStorage.setItem('md_tools_config', JSON.stringify(toolsConfig));
+            renderDynamicSidebar();
+        }
+
+        function moveTool(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex >= 0 && targetIndex < toolsConfig.length) {
+                const temp = toolsConfig[index];
+                toolsConfig[index] = toolsConfig[targetIndex];
+                toolsConfig[targetIndex] = temp;
+                localStorage.setItem('md_tools_config', JSON.stringify(toolsConfig));
+                renderToolsReorderManager();
+                renderDynamicSidebar();
+            }
+        }
+
+        function saveSiteTitle() {
+            const newTitle = document.getElementById('adminSiteTitleInput').value.trim();
+            if (newTitle) {
+                systemConfig.wardTitle = newTitle;
+                localStorage.setItem('md_ward_title', newTitle);
+                document.getElementById('headerWardTitle').innerText = newTitle;
+                alert("تم تحديث اسم الموقع بنجاح!");
+            }
+        }
+
+        /* ========================================================
+           2. قفل لوحة الإدارة والتحكم
+           ======================================================== */
+        function checkAdminPin() {
+            const input = document.getElementById('adminPinInput');
+            const err = document.getElementById('pinErrorMsg');
+            if (input.value === systemConfig.adminPin) {
+                isAdminUnlocked = true;
+                err.style.display = 'none';
+                document.getElementById('adminLockScreen').style.display = 'none';
+                document.getElementById('adminUnlockedContent').style.display = 'block';
+                input.value = '';
+                populateAdminFields();
+            } else {
+                err.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function lockAdminPanel() {
+            isAdminUnlocked = false;
+            document.getElementById('adminLockScreen').style.display = 'block';
+            document.getElementById('adminUnlockedContent').style.display = 'none';
+        }
+
+        function switchAdminPane(paneId) {
+            document.querySelectorAll('.admin-section-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(paneId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function populateAdminFields() {
+            document.getElementById('adminBannerText').value = systemConfig.bannerText;
+            document.getElementById('adminBannerType').value = systemConfig.bannerType;
+            document.getElementById('adminBannerActive').value = systemConfig.bannerActive ? "true" : "false";
+            document.getElementById('adminSiteTitleInput').value = systemConfig.wardTitle;
+            document.getElementById('adminGeminiApiKeyInput').value = systemConfig.geminiApiKey;
+            document.getElementById('adminAIEnabledSelect').value = systemConfig.aiEnabled ? "true" : "false";
+            document.getElementById('adminAIProviderSelect').value = systemConfig.aiProvider;
+            document.getElementById('adminAICustomEndpoint').value = systemConfig.aiCustomEndpoint;
+
+            renderToolsReorderManager();
+            renderActilyseAdminManager();
+            renderCTAdminManager();
+            togglePediatricFormFields();
+        }
+
+        function saveBannerConfig(e) {
+            e.preventDefault();
+            systemConfig.bannerText = document.getElementById('adminBannerText').value.trim();
+            systemConfig.bannerType = document.getElementById('adminBannerType').value;
+            systemConfig.bannerActive = document.getElementById('adminBannerActive').value === "true";
+
+            localStorage.setItem('md_banner_text', systemConfig.bannerText);
+            localStorage.setItem('md_banner_type', systemConfig.bannerType);
+            localStorage.setItem('md_banner_active', systemConfig.bannerActive);
+
+            applyBannerSettings();
+            alert("تم حفظ وتطبيق البنر الإعلاني بنجاح!");
+        }
+
+        function saveAISettingsFromAdmin() {
+            systemConfig.aiEnabled = document.getElementById('adminAIEnabledSelect').value === "true";
+            systemConfig.aiProvider = document.getElementById('adminAIProviderSelect').value;
+            systemConfig.geminiApiKey = document.getElementById('adminGeminiApiKeyInput').value.trim();
+            systemConfig.aiCustomEndpoint = document.getElementById('adminAICustomEndpoint').value.trim();
+
+            localStorage.setItem('md_ai_enabled', systemConfig.aiEnabled);
+            localStorage.setItem('md_ai_provider', systemConfig.aiProvider);
+            localStorage.setItem('md_gemini_key', systemConfig.geminiApiKey);
+            localStorage.setItem('md_ai_custom_endpoint', systemConfig.aiCustomEndpoint);
+
+            applyAISettings();
+            alert("تم حفظ وتحديث إعدادات الذكاء الاصطناعي بنجاح!");
+        }
+
+        function applyAISettings() {
+            const aiFab = document.getElementById('aiMainFabWidget');
+            const aiBadge = document.getElementById('aiStatusBadge');
+            if (systemConfig.aiEnabled) {
+                aiFab.style.display = 'flex';
+                aiBadge.innerText = systemConfig.aiProvider === 'gemini' ? 'الذكاء السريري (Gemini API) نشط' : 'الذكاء السريري الداخلي نشط';
+                aiBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+                aiBadge.style.color = '#34d399';
+            } else {
+                aiFab.style.display = 'none';
+                document.getElementById('aiPanel').classList.remove('open');
+                aiBadge.innerText = 'الذكاء الاصطناعي معطل';
+                aiBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+                aiBadge.style.color = '#f87171';
+            }
+        }
+
+        function handleChangePin(e) {
+            e.preventDefault();
+            const oldPin = document.getElementById('oldPinInput').value;
+            const newPin = document.getElementById('newPinInput').value;
+            const confirmPin = document.getElementById('confirmNewPinInput').value;
+
+            if (oldPin !== systemConfig.adminPin) {
+                alert("الرمز الحالي غير صحيح!");
+                return;
+            }
+            if (newPin.length < 4) {
+                alert("الرمز يجب ألا يقل عن 4 أرقام!");
+                return;
+            }
+            if (newPin !== confirmPin) {
+                alert("الرمز الجديد غير متطابق!");
+                return;
+            }
+
+            systemConfig.adminPin = newPin;
+            localStorage.setItem('md_admin_pin', newPin);
+            alert("تم تحديث رمز PIN بنجاح!");
+            document.getElementById('oldPinInput').value = '';
+            document.getElementById('newPinInput').value = '';
+            document.getElementById('confirmNewPinInput').value = '';
+        }
+
+        function wipePatients(type) {
+            if (type === 'ward') {
+                if (confirm("هل تريد بالتأكيد حذف جميع مرضى الردهة؟")) {
+                    patientsList = [];
+                    localStorage.setItem('md_patients', JSON.stringify(patientsList));
+                    renderPatientsList();
+                    alert("تم حذف جميع مرضى الردهة.");
+                }
+            } else if (type === 'triage') {
+                if (confirm("هل تريد بالتأكيد حذف جميع مرضى فرز الطوارئ؟")) {
+                    erTriageList = [];
+                    localStorage.setItem('md_triage_patients', JSON.stringify(erTriageList));
+                    renderERTriageList();
+                    alert("تم حذف جميع مرضى فرز الطوارئ.");
+                }
+            } else if (type === 'dialysis') {
+                if (confirm("هل تريد بالتأكيد حذف جميع مرضى الغسل الكلوي؟")) {
+                    hdPatientsList = [];
+                    localStorage.setItem('md_hd_patients_list', JSON.stringify(hdPatientsList));
+                    renderHDPatientsList();
+                    alert("تم حذف جميع مرضى الغسل الكلوي.");
+                }
+            }
+        }
+
+        function wipeAllSystemData() {
+            if (confirm("تحذير فائق: هذا الإجراء سيعيد ضبط المصنع ويمسح كافة المرضى والإعدادات. هل تود الاستمرار؟")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function applyBannerSettings() {
+            const banner = document.getElementById('siteBanner');
+            document.getElementById('headerWardTitle').innerText = systemConfig.wardTitle;
+            if (systemConfig.bannerActive) {
+                banner.className = `site-banner ${systemConfig.bannerType}`;
+                document.getElementById('bannerText').innerText = systemConfig.bannerText;
+                banner.style.display = 'flex';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function dismissBanner() {
+            document.getElementById('siteBanner').style.display = 'none';
+        }
+
+        /* ========================================================
+           3. إدارة موانع أكتيليز (معربة بالكامل وقابلة للتعديل)
+           ======================================================== */
+        let actilyseRules = JSON.parse(localStorage.getItem('md_actilyse_rules')) || {
+            abs: [
+                "نزيف داخل القحف / الدماغ حالي أو سابق مثبت في أي وقت مضى",
+                "إصابة رأس شديدة أو رضح خطير أو جراحة دماغية/نخاعية خلال آخر 3 أشهر",
+                "وجود نزيف داخلي نشط غير خاضع للضغط المباشر",
+                "اشتباه سريري قوي بحدوث نزيف تحت العنكبوتية (Subarachnoid Hemorrhage)",
+                "وجود ورم خبيث بالدماغ، أو تشوه شرياني وريدي (AVM) أو أم دم بالجمجمة",
+                "ضغط دم حرج غير مستجيب: الانقباضي > 185 mmHg أو الانبساطي > 110 mmHg رغم الخوافض الوريدية السريعة",
+                "عدد الصفائح الدموية أقل من 100,000 / mm³",
+                "تناول مضادات التخثر الفموية الحديثة (NOACs) خلال 48 ساعة أو تحليل INR > 1.7"
+            ],
+            rel: [
+                "أعراض السكتة الدماغية طفيفة جداً أو تتحسن سريعاً وتلقائياً",
+                "جراحة كبرى أو رضح جسدي خطير خلال آخر 14 يوماً",
+                "نزيف في الجهاز الهضمي أو البولي خلال آخر 21 يوماً",
+                "نوبة تشنج صرعي تزامنت مع بداية ظهور أعراض السكتة",
+                "الحمل أو الولادة الحديثة (أقل من أسبوعين)"
+            ]
+        };
+
+        let actilyseState = { abs: {}, rel: {} };
+
+        function buildActilyseChecklist() {
+            const absBox = document.getElementById('actilyseAbsoluteList');
+            absBox.innerHTML = '';
+            actilyseRules.abs.forEach((rule, idx) => {
+                if (actilyseState.abs[idx] === undefined) actilyseState.abs[idx] = false;
+                absBox.innerHTML += `
+                    <div class="checklist-item">
+                        <span><i class="fas fa-times-circle" style="color:var(--accent-red); margin-left:6px;"></i>${rule}</span>
+                        <div class="toggle-switch-group">
+                            <button type="button" class="choice-btn ${actilyseState.abs[idx] ? 'selected-yes' : ''}" id="btn-act-abs-y-${idx}" onclick="setActilyseChoice('abs', ${idx}, true)">نعم (موجود)</button>
+                            <button type="button" class="choice-btn ${!actilyseState.abs[idx] ? 'selected-no' : ''}" id="btn-act-abs-n-${idx}" onclick="setActilyseChoice('abs', ${idx}, false)">لا</button>
+                        </div>
+                    </div>`;
+            });
+
+            const relBox = document.getElementById('actilyseRelativeList');
+            relBox.innerHTML = '';
+            actilyseRules.rel.forEach((rule, idx) => {
+                if (actilyseState.rel[idx] === undefined) actilyseState.rel[idx] = false;
+                relBox.innerHTML += `
+                    <div class="checklist-item">
+                        <span><i class="fas fa-exclamation-circle" style="color:var(--accent-amber); margin-left:6px;"></i>${rule}</span>
+                        <div class="toggle-switch-group">
+                            <button type="button" class="choice-btn ${actilyseState.rel[idx] ? 'selected-yes' : ''}" id="btn-act-rel-y-${idx}" onclick="setActilyseChoice('rel', ${idx}, true)">نعم (موجود)</button>
+                            <button type="button" class="choice-btn ${!actilyseState.rel[idx] ? 'selected-no' : ''}" id="btn-act-rel-n-${idx}" onclick="setActilyseChoice('rel', ${idx}, false)">لا</button>
+                        </div>
+                    </div>`;
+            });
+
+            evaluateActilyseDecision();
+        }
+
+        function setActilyseChoice(type, idx, val) {
+            actilyseState[type][idx] = val;
+            const yBtn = document.getElementById(`btn-act-${type}-y-${idx}`);
+            const nBtn = document.getElementById(`btn-act-${type}-n-${idx}`);
+            if (val) {
+                yBtn.classList.add('selected-yes');
+                nBtn.classList.remove('selected-no');
+            } else {
+                yBtn.classList.remove('selected-yes');
+                nBtn.classList.add('selected-no');
+            }
+            evaluateActilyseDecision();
+        }
+
+        function evaluateActilyseDecision() {
+            const banner = document.getElementById('actilyseDecision');
+            const hasAbsolute = Object.values(actilyseState.abs).some(v => v === true);
+            const hasRelative = Object.values(actilyseState.rel).some(v => v === true);
+
+            if (hasAbsolute) {
+                banner.className = 'decision-banner decision-stop';
+                banner.innerHTML = `<i class="fas fa-ban" style="font-size:1.6rem;"></i><div><strong>القرار السريري: يمنع إعطاء أكتيليز (Alteplase) منعاً باتاً!</strong><p>تم تحديد مانع مطلق؛ إعطاء الدواء يسبب خطراً كارثياً ومميتاً للنزيف داخل الدماغ [AHA/ASA Guidelines].</p></div>`;
+            } else if (hasRelative) {
+                banner.className = 'decision-banner decision-caution';
+                banner.innerHTML = `<i class="fas fa-triangle-exclamation" style="font-size:1.6rem;"></i><div><strong>القرار السريري: مسموح بحذر شديد (Relative Contraindication)</strong><p>توجد موانع نسبية؛ يتطلب تقييم اختصاصي الأعصاب لموازنة العجز السريري مقابل خطورة النزيف.</p></div>`;
+            } else {
+                banner.className = 'decision-banner decision-safe';
+                banner.innerHTML = `<i class="fas fa-circle-check" style="font-size:1.6rem;"></i><div><strong>القرار السريري: المريض مؤهل لتلقي مذيب التخثر أكتيليز (Eligible for rtPA)</strong><p>لا توجد موانع مطلقة أو نسبية. تأكد أن وقت بداية الأعراض أقل من 4.5 ساعة والـ BP < 185/110 mmHg.</p></div>`;
+            }
+        }
+
+        function resetActilyseChecklist() {
+            actilyseState = { abs: {}, rel: {} };
+            buildActilyseChecklist();
+        }
+
+        function renderActilyseAdminManager() {
+            const container = document.getElementById('adminActilyseListManage');
+            container.innerHTML = '';
+            actilyseRules.abs.forEach((r, idx) => {
+                container.innerHTML += `<div class="tool-order-item"><span><strong style="color:var(--accent-red);">[مطلق]</strong> ${r}</span><button class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="deleteActilyseRule('abs', ${idx})"><i class="fas fa-trash"></i></button></div>`;
+            });
+            actilyseRules.rel.forEach((r, idx) => {
+                container.innerHTML += `<div class="tool-order-item"><span><strong style="color:var(--accent-amber);">[نسبي]</strong> ${r}</span><button class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="deleteActilyseRule('rel', ${idx})"><i class="fas fa-trash"></i></button></div>`;
+            });
+        }
+
+        function handleAddActilyseRuleAdmin(e) {
+            e.preventDefault();
+            const type = document.getElementById('admin-act-type').value;
+            const text = document.getElementById('admin-act-text').value.trim();
+            if (text) {
+                actilyseRules[type].push(text);
+                localStorage.setItem('md_actilyse_rules', JSON.stringify(actilyseRules));
+                document.getElementById('admin-act-text').value = '';
+                renderActilyseAdminManager();
+                buildActilyseChecklist();
+                alert("تمت إضافة مانع أكتيليز بنجاح!");
+            }
+        }
+
+        function deleteActilyseRule(type, idx) {
+            if (confirm("هل تريد حذف هذا المانع من القائمة؟")) {
+                actilyseRules[type].splice(idx, 1);
+                localStorage.setItem('md_actilyse_rules', JSON.stringify(actilyseRules));
+                renderActilyseAdminManager();
+                buildActilyseChecklist();
+            }
+        }
+
+        /* ========================================================
+           4. إدارة معايير مفراس الرأس (معربة بالكامل وقابلة للتعديل)
+           ======================================================== */
+        let ctRules = JSON.parse(localStorage.getItem('md_ct_rules')) || {
+            high: [
+                "مقياس كلاسكو GCS أقل من 15 بعد ساعتين من وقت الإصابة",
+                "اشتباه سريري بكسر منخسف أو مفتوح في عظام الجمجمة",
+                "أي علامة سريرية لكسر قاعدة الجمجمة (عيون الراكون، علامة باتل خلف الأذن، سيلان دم أو سائل نخاعي)",
+                "حدوث نوبتين أو أكثر من التقيؤ الصريح المقذوف",
+                "عمر المصاب 65 سنة فما فوق"
+            ],
+            med: [
+                "فقدان الذاكرة للأحداث التي سبقت الإصابة (Retrograde Amnesia) لأكثر من 30 دقيقة",
+                "آلية إصابة شديدة العنف: دهس مشاة، قذف المصاب خارج المركبة، أو السقوط من ارتفاع يفوق 3 أقدام"
+            ]
+        };
+
+        let ctState = { high: {}, med: {} };
+
+        function buildCTChecklist() {
+            const highBox = document.getElementById('ctHighRiskList');
+            highBox.innerHTML = '';
+            ctRules.high.forEach((rule, idx) => {
+                if (ctState.high[idx] === undefined) ctState.high[idx] = false;
+                highBox.innerHTML += `
+                    <div class="checklist-item">
+                        <span><i class="fas fa-circle-exclamation" style="color:var(--accent-red); margin-left:6px;"></i>${rule}</span>
+                        <div class="toggle-switch-group">
+                            <button type="button" class="choice-btn ${ctState.high[idx] ? 'selected-yes' : ''}" id="btn-ct-h-y-${idx}" onclick="setCTChoice('high', ${idx}, true)">نعم</button>
+                            <button type="button" class="choice-btn ${!ctState.high[idx] ? 'selected-no' : ''}" id="btn-ct-h-n-${idx}" onclick="setCTChoice('high', ${idx}, false)">لا</button>
+                        </div>
+                    </div>`;
+            });
+
+            const medBox = document.getElementById('ctMediumRiskList');
+            medBox.innerHTML = '';
+            ctRules.med.forEach((rule, idx) => {
+                if (ctState.med[idx] === undefined) ctState.med[idx] = false;
+                medBox.innerHTML += `
+                    <div class="checklist-item">
+                        <span><i class="fas fa-circle-info" style="color:var(--accent-amber); margin-left:6px;"></i>${rule}</span>
+                        <div class="toggle-switch-group">
+                            <button type="button" class="choice-btn ${ctState.med[idx] ? 'selected-yes' : ''}" id="btn-ct-m-y-${idx}" onclick="setCTChoice('med', ${idx}, true)">نعم</button>
+                            <button type="button" class="choice-btn ${!ctState.med[idx] ? 'selected-no' : ''}" id="btn-ct-m-n-${idx}" onclick="setCTChoice('med', ${idx}, false)">لا</button>
+                        </div>
+                    </div>`;
+            });
+
+            evaluateCTDecision();
+        }
+
+        function setCTChoice(group, idx, val) {
+            ctState[group][idx] = val;
+            const prefix = group === 'high' ? 'h' : 'm';
+            const yBtn = document.getElementById(`btn-ct-${prefix}-y-${idx}`);
+            const nBtn = document.getElementById(`btn-ct-${prefix}-n-${idx}`);
+            if (val) {
+                yBtn.classList.add('selected-yes');
+                nBtn.classList.remove('selected-no');
+            } else {
+                yBtn.classList.remove('selected-yes');
+                nBtn.classList.add('selected-no');
+            }
+            evaluateCTDecision();
+        }
+
+        function evaluateCTDecision() {
+            const banner = document.getElementById('ctDecision');
+            const hasHigh = Object.values(ctState.high).some(v => v === true);
+            const hasMed = Object.values(ctState.med).some(v => v === true);
+
+            if (hasHigh) {
+                banner.className = 'decision-banner decision-stop';
+                banner.innerHTML = `<i class="fas fa-radiation" style="font-size:1.6rem;"></i><div><strong>القرار: يلزم إجراء مفراس الرأس (CT Brain) فوراً ودون تأخير!</strong><p>وجود مؤشر عالي الخطورة لاحتمال التدخل الجراحي العصبي العاجل وفق القواعد الكندية.</p></div>`;
+            } else if (hasMed) {
+                banner.className = 'decision-banner decision-caution';
+                banner.innerHTML = `<i class="fas fa-triangle-exclamation" style="font-size:1.6rem;"></i><div><strong>القرار: يوصى بإجراء مفراس الرأس (CT Brain)</strong><p>وجود مؤشر خطورة متوسطة لاحتمال وجود نزيف أو آفة دماغية رضية.</p></div>`;
+            } else {
+                banner.className = 'decision-banner decision-safe';
+                banner.innerHTML = `<i class="fas fa-circle-check" style="font-size:1.6rem;"></i><div><strong>القرار: لا داعي لإجراء CT Brain حالياً</strong><p>المريض منخفض الخطورة؛ يكتفى بالمراقبة السريرية الآمنة وتزويد المرافق بورقة تعليمات إصابات الرأس.</p></div>`;
+            }
+        }
+
+        function resetCTChecklist() {
+            ctState = { high: {}, med: {} };
+            buildCTChecklist();
+        }
+
+        function renderCTAdminManager() {
+            const container = document.getElementById('adminCTListManage');
+            container.innerHTML = '';
+            ctRules.high.forEach((r, idx) => {
+                container.innerHTML += `<div class="tool-order-item"><span><strong style="color:var(--accent-red);">[عالي]</strong> ${r}</span><button class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="deleteCTRule('high', ${idx})"><i class="fas fa-trash"></i></button></div>`;
+            });
+            ctRules.med.forEach((r, idx) => {
+                container.innerHTML += `<div class="tool-order-item"><span><strong style="color:var(--accent-amber);">[متوسط]</strong> ${r}</span><button class="btn btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="deleteCTRule('med', ${idx})"><i class="fas fa-trash"></i></button></div>`;
+            });
+        }
+
+        function handleAddCTRuleAdmin(e) {
+            e.preventDefault();
+            const type = document.getElementById('admin-ct-type').value;
+            const text = document.getElementById('admin-ct-text').value.trim();
+            if (text) {
+                ctRules[type].push(text);
+                localStorage.setItem('md_ct_rules', JSON.stringify(ctRules));
+                document.getElementById('admin-ct-text').value = '';
+                renderCTAdminManager();
+                buildCTChecklist();
+                alert("تمت إضافة معيار المفراس بنجاح!");
+            }
+        }
+
+        function deleteCTRule(type, idx) {
+            if (confirm("هل تريد حذف هذا المعيار من القائمة؟")) {
+                ctRules[type].splice(idx, 1);
+                localStorage.setItem('md_ct_rules', JSON.stringify(ctRules));
+                renderCTAdminManager();
+                buildCTChecklist();
+            }
+        }
+
+        /* ========================================================
+           5. فرز مرضى الطوارئ بالذكاء الاصطناعي ESI Triage
+           ======================================================== */
+        let erTriageList = JSON.parse(localStorage.getItem('md_triage_patients')) || [
+            {
+                id: 501,
+                name: "حسين علي مهدي",
+                age: 58,
+                cc: "ألم عاصر خلف القص مع تعرق بارد وضيق تنفس حاد بدأ قبل 30 دقيقة",
+                bp: "85/55",
+                hr: 118,
+                rr: 26,
+                spo2: 90,
+                gcs: 15,
+                pain: 9,
+                redflags: "chest_stemi",
+                triageLevel: 1,
+                triageTitle: "Level 1: Resuscitation (إنعاش فوري)",
+                badgeClass: "esi-1",
+                rationale: "هبوط ضغط شرياني حرج، ألم صدري إقفاري مهدد للحياة، ونقص أكسجة حاد.",
+                action: "تخطيط قلب خلال 5 دقائق، أكسجين عالي التدفق، تركيب كانيولتين 16G، وتجهيز قسطرة قلبية فورية."
+            }
+        ];
+
+        function renderERTriageList() {
+            const container = document.getElementById('erTriageContainer');
+            container.innerHTML = '';
+            let red = 0, orange = 0, yellow = 0;
+
+            erTriageList.sort((a,b) => a.triageLevel - b.triageLevel).forEach(p => {
+                if (p.triageLevel === 1) red++;
+                else if (p.triageLevel === 2) orange++;
+                else yellow++;
+
+                const card = document.createElement('div');
+                card.className = 'patient-card';
+                card.style.borderRight = p.triageLevel === 1 ? '5px solid #ef4444' : (p.triageLevel === 2 ? '5px solid #f97316' : '5px solid #eab308');
+
+                card.innerHTML = `
+                    <div>
+                        <div class="card-top">
+                            <h3><i class="fas fa-user-injured" style="color:var(--primary); margin-left:6px;"></i>${p.name} (${p.age} سنة)</h3>
+                            <span class="triage-level-badge ${p.badgeClass}"><i class="fas fa-triangle-exclamation"></i> ${p.triageTitle}</span>
+                        </div>
+                        <div class="cc-highlight">
+                            <i class="fas fa-bullseye"></i> <strong>الشكوى:</strong> ${p.cc}
+                        </div>
+                        <div style="font-size:0.84rem; line-height:1.45; margin-bottom:0.4rem;">
+                            <strong>تقييم الذكاء الاصطناعي:</strong> ${p.rationale}
+                        </div>
+                        <div style="background:#f8fafc; border:1px dashed #cbd5e1; padding:0.4rem 0.6rem; border-radius:6px; font-size:0.8rem; color:#0369a1; font-weight:700;">
+                            <i class="fas fa-kit-medical"></i> <strong>التدبير الفوري:</strong> ${p.action}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="vitals-pill-box">
+                            <span class="v-pill">BP: ${p.bp}</span>
+                            <span class="v-pill">HR: ${p.hr}</span>
+                            <span class="v-pill">RR: ${p.rr}</span>
+                            <span class="v-pill">SpO2: ${p.spo2}%</span>
+                            <span class="v-pill">GCS: ${p.gcs}</span>
+                            <span class="v-pill">Pain: ${p.pain}/10</span>
+                        </div>
+                        <button class="btn btn-secondary" style="width:100%; margin-top:0.6rem; padding:0.35rem; font-size:0.75rem;" onclick="deleteTriagePatient(${p.id})"><i class="fas fa-check"></i> إنهاء الحالة وتخريجها</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('triageCountRed').innerText = red;
+            document.getElementById('triageCountOrange').innerText = orange;
+            document.getElementById('triageCountYellow').innerText = yellow;
+        }
+
+        function openTriageModal() {
+            document.getElementById('triageForm').reset();
+            document.getElementById('triageModal').classList.add('open');
+        }
+
+        function closeTriageModal() {
+            document.getElementById('triageModal').classList.remove('open');
+        }
+
+        function handleTriageSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('tr-name').value.trim();
+            const age = parseInt(document.getElementById('tr-age').value);
+            const cc = document.getElementById('tr-cc').value.trim();
+            const bp = document.getElementById('tr-bp').value.trim();
+            const hr = parseInt(document.getElementById('tr-hr').value);
+            const rr = parseInt(document.getElementById('tr-rr').value);
+            const spo2 = parseInt(document.getElementById('tr-spo2').value);
+            const gcs = parseInt(document.getElementById('tr-gcs').value);
+            const pain = parseInt(document.getElementById('tr-pain').value);
+            const redflags = document.getElementById('tr-redflags').value;
+
+            let level = 3;
+            let levelTitle = "Level 3: Urgent (حاد ومستقر)";
+            let badgeClass = "esi-3";
+            let rationale = "العلامات الحيوية مستقرة نسبياً، يتطلب موارد تشخيصية وعلاجية متعددة.";
+            let action = "حجز وريدي، سحب تحاليل دم، مراقبة العلامات الحيوية كل 30 دقيقة.";
+
+            if (redflags === 'cardiac_arrest' || gcs <= 8 || spo2 < 85 || hr < 40 || hr > 160) {
+                level = 1;
+                levelTitle = "Level 1: Resuscitation (إنعاش فوري)";
+                badgeClass = "esi-1";
+                rationale = "حالة مهددة للحياة فوراً؛ خطر توقف تنفسي أو قلبي وشيك مع فشل عصبي أو دوراني حاد.";
+                action = "دخول غرفة الإنعاش الأحمر، تأمين مجرى التنفس، مراقبة قلبية فورية، استدعاء اختصاصي الطوارئ.";
+            } else if (redflags === 'chest_stemi' || redflags === 'shock_lethal' || redflags === 'stroke_focal' || pain >= 8 || hr > 120 || rr > 26 || spo2 < 92) {
+                level = 2;
+                levelTitle = "Level 2: Emergent (طارئ حرج < 15 دقيقة)";
+                badgeClass = "esi-2";
+                rationale = "حالة عالية الخطورة تشمل اشتباه جلطة قلبية أو سكتة أو صدمة مبكرة مع اضطراب في الفعاليات الحيوية.";
+                action = "تخطيط قلب فوري، تأمين خطين وريديين، إعطاء أكسجين، والتدخل السريري خلال دقائق.";
+            }
+
+            erTriageList.unshift({
+                id: Date.now(),
+                name, age, cc, bp, hr, rr, spo2, gcs, pain, redflags,
+                triageLevel: level, triageTitle: levelTitle, badgeClass, rationale, action
+            });
+
+            localStorage.setItem('md_triage_patients', JSON.stringify(erTriageList));
+            closeTriageModal();
+            renderERTriageList();
+            renderPatientsList();
+            alert(`تم فرز المريض (${name}) بنجاح: ${levelTitle}`);
+        }
+
+        function deleteTriagePatient(id) {
+            if (confirm("هل تريد تخريج هذا المريض وإنهاء فرزه؟")) {
+                erTriageList = erTriageList.filter(p => p.id !== id);
+                localStorage.setItem('md_triage_patients', JSON.stringify(erTriageList));
+                renderERTriageList();
+                renderPatientsList();
+            }
+        }
+
+        /* ========================================================
+           6. وحدة مرضى الغسل الكلوي المتطورة (تعديل كامل وبروتوكولات)
+           ======================================================== */
+        let hdPatientsList = JSON.parse(localStorage.getItem('md_hd_patients_list')) || [
+            {
+                id: 601,
+                name: "عبد الجبار كاظم",
+                schedule: "السبت - الاثنين - الأربعاء (Shift 1)",
+                access: "AV Fistula (شرياني وريدي طبيعي)",
+                dryWeight: 70.0,
+                preWeight: 74.2,
+                bp: "175/100",
+                k: 6.6,
+                urea: 155,
+                cr: 9.2,
+                hb: 9.4,
+                ca: 8.6,
+                po4: 6.2,
+                aiDecision: "تحذير فرط بوتاسيوم حاد ومخاطر سحب سوائل",
+                aiAdvice: "إعطاء Calcium Gluconate 10% فوراً قبل الشروع بوصل الإبر لتثبيت القلب، وتحديد سحب السوائل UF = 3.5 L مع مراقبة الضغط."
+            }
+        ];
+
+        function renderHDPatientsList() {
+            const container = document.getElementById('hdPatientsContainer');
+            container.innerHTML = '';
+
+            hdPatientsList.forEach(p => {
+                const fluidOverload = (p.preWeight - p.dryWeight).toFixed(1);
+                const overloadPercent = ((fluidOverload / p.dryWeight) * 100).toFixed(1);
+
+                const card = document.createElement('div');
+                card.className = 'patient-card';
+                card.style.borderRight = p.k >= 6.5 ? '5px solid #ef4444' : '5px solid #0d9488';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="card-top">
+                            <h3><i class="fas fa-droplet" style="color:var(--accent-teal);"></i> ${p.name}</h3>
+                            <span class="doc-badge">${p.schedule}</span>
+                        </div>
+                        <div class="patient-data-item"><strong>المخرج:</strong> <span>${p.access}</span></div>
+                        <div class="patient-data-item"><strong>الوزن الجاف / الحالي:</strong> <span>${p.dryWeight} kg / ${p.preWeight} kg</span></div>
+                        <div class="cc-highlight" style="background:#f0fdfa; color:#0f766e;">
+                            <i class="fas fa-water"></i> <strong>احتباس السوائل:</strong> +${fluidOverload} L (${overloadPercent}% من وزن الجسم)
+                        </div>
+                        <div style="background:#fef2f2; border:1px dashed #fca5a5; padding:0.5rem; border-radius:6px; margin:0.4rem 0; font-size:0.82rem; color:#991b1b;">
+                            <strong><i class="fas fa-microchip"></i> تقييم الذكاء الاصطناعي:</strong> ${p.aiAdvice}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="vitals-pill-box">
+                            <span class="v-pill">BP: ${p.bp}</span>
+                            <span class="v-pill" style="color:${p.k >= 6.0 ? '#b91c1c' : '#0f172a'}; font-weight:800;">K+: ${p.k} mmol/L</span>
+                            <span class="v-pill">Urea: ${p.urea}</span>
+                            <span class="v-pill">Cr: ${p.cr}</span>
+                            <span class="v-pill">Hb: ${p.hb}</span>
+                            <span class="v-pill">Ca: ${p.ca}</span>
+                            <span class="v-pill">PO4: ${p.po4}</span>
+                        </div>
+                        <div style="display:flex; gap:0.4rem; margin-top:0.6rem;">
+                            <button class="btn btn-teal" style="flex:1; padding:0.35rem; font-size:0.75rem;" onclick="openHDPatientModal(${p.id})"><i class="fas fa-pen-to-square"></i> تعديل التحاليل والبيانات</button>
+                            <button class="btn btn-secondary" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="deleteHDPatient(${p.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openHDPatientModal(editId = null) {
+            const form = document.getElementById('hdPatientForm');
+            form.reset();
+
+            if (editId) {
+                const p = hdPatientsList.find(x => x.id === editId);
+                document.getElementById('hdModalTitle').innerHTML = `<i class="fas fa-pen-to-square" style="color:var(--accent-teal);"></i> تعديل تحاليل وبيانات المريض: ${p.name}`;
+                document.getElementById('hd-edit-id').value = p.id;
+                document.getElementById('hd-name').value = p.name;
+                document.getElementById('hd-schedule').value = p.schedule;
+                document.getElementById('hd-access').value = p.access;
+                document.getElementById('hd-dryweight').value = p.dryWeight;
+                document.getElementById('hd-preweight').value = p.preWeight;
+                document.getElementById('hd-bp').value = p.bp;
+                document.getElementById('hd-k').value = p.k;
+                document.getElementById('hd-urea').value = p.urea;
+                document.getElementById('hd-cr').value = p.cr;
+                document.getElementById('hd-hb').value = p.hb;
+                document.getElementById('hd-ca').value = p.ca;
+                document.getElementById('hd-po4').value = p.po4;
+            } else {
+                document.getElementById('hdModalTitle').innerHTML = `<i class="fas fa-droplet" style="color:var(--accent-teal);"></i> إضافة مريض لوحدة الغسل الكلوي`;
+                document.getElementById('hd-edit-id').value = '';
+            }
+
+            document.getElementById('hdPatientModal').classList.add('open');
+        }
+
+        function closeHDPatientModal() {
+            document.getElementById('hdPatientModal').classList.remove('open');
+        }
+
+        function handleHDPatientSubmit(e) {
+            e.preventDefault();
+            const editId = document.getElementById('hd-edit-id').value;
+            const name = document.getElementById('hd-name').value.trim();
+            const schedule = document.getElementById('hd-schedule').value;
+            const access = document.getElementById('hd-access').value;
+            const dryWeight = parseFloat(document.getElementById('hd-dryweight').value);
+            const preWeight = parseFloat(document.getElementById('hd-preweight').value);
+            const bp = document.getElementById('hd-bp').value.trim();
+            const k = parseFloat(document.getElementById('hd-k').value);
+            const urea = parseFloat(document.getElementById('hd-urea').value);
+            const cr = parseFloat(document.getElementById('hd-cr').value);
+            const hb = parseFloat(document.getElementById('hd-hb').value);
+            const ca = parseFloat(document.getElementById('hd-ca').value);
+            const po4 = parseFloat(document.getElementById('hd-po4').value);
+
+            let advice = "المؤشرات ملائمة للشروع بجلسة الغسل القياسية مع سحب السوائل الزائدة.";
+            let decision = "Proceed Standard";
+            const overload = preWeight - dryWeight;
+            const caPo4Product = ca * po4;
+
+            if (k >= 6.5) {
+                advice = "خطر فرط بوتاسيوم مهدد للحياة! إعطاء Calcium Gluconate 10% IV فوراً قبل وخز الإبر، واستخدام حمام غسل 1K أو 0K.";
+                decision = "Urgent Membrane Stabilization";
+            } else if (overload > 4.0) {
+                advice = `احتباس سوائل كبير (+${overload.toFixed(1)} L)؛ خطر هبوط الضغط الحاد (IDH) عند محاولة السحب السريع.`;
+            }
+
+            if (caPo4Product > 55) {
+                advice += ` تنبيه: حاصل ضرب الكالسيوم والفوسفور (${caPo4Product.toFixed(1)}) مرتفع ويسبب تكلس الأوعية.`;
+            }
+
+            const pData = {
+                id: editId ? parseInt(editId) : Date.now(),
+                name, schedule, access, dryWeight, preWeight, bp, k, urea, cr, hb, ca, po4,
+                aiDecision: decision, aiAdvice: advice
+            };
+
+            if (editId) {
+                const idx = hdPatientsList.findIndex(x => x.id === parseInt(editId));
+                hdPatientsList[idx] = pData;
+            } else {
+                hdPatientsList.unshift(pData);
+            }
+
+            localStorage.setItem('md_hd_patients_list', JSON.stringify(hdPatientsList));
+            closeHDPatientModal();
+            renderHDPatientsList();
+            renderPatientsList();
+            alert(`تم حفظ وتحديث بيانات مريض الغسل والتحاليل بنجاح!`);
+        }
+
+        function deleteHDPatient(id) {
+            if (confirm("هل تريد بالتأكيد حذف ملف مريض الغسل هذا؟")) {
+                hdPatientsList = hdPatientsList.filter(p => p.id !== id);
+                localStorage.setItem('md_hd_patients_list', JSON.stringify(hdPatientsList));
+                renderHDPatientsList();
+                renderPatientsList();
+            }
+        }
+
+        function openHDProtocolsModal() {
+            document.getElementById('hdProtocolsModal').classList.add('open');
+        }
+
+        function closeHDProtocolsModal() {
+            document.getElementById('hdProtocolsModal').classList.remove('open');
+        }
+
+        /* ========================================================
+           7. حاسبة الأطفال وصيدلية العراق وأدوية الطوارئ
+           ======================================================== */
+        let pediatricDrugsList = JSON.parse(localStorage.getItem('md_peds_drugs')) || [
+            { id: "paracetamol", name: "Paracetamol Pediatric (120mg / 5ml)", category: "Antipyretic", mgPerKg: 15, concMg: 120, concMl: 5, frequency: "Every 4 to 6 hours PRN", maxDoseMg: 2000, notes: "Max 60 mg/kg/day to prevent acute hepatic necrosis. [BNF Children]" },
+            { id: "amoxicillin_clav", name: "Augmentin Suspension (228mg / 5ml)", category: "Antibiotic", mgPerKg: 22.5, concMg: 200, concMl: 5, frequency: "Every 12 hours for 7-10 days", maxDoseMg: 2000, notes: "Calculated based on 45 mg/kg/day divided BID. Keep refrigerated." },
+            { id: "diazepam", name: "Diazepam for Seizures (5mg/ml)", category: "Anticonvulsant", mgPerKg: 0.3, concMg: 5, concMl: 1, frequency: "Single slow IV dose over 2 min or rectally", maxDoseMg: 10, notes: "Monitor respiratory effort closely." }
+        ];
+
+        function populatePediatricDropdown() {
+            const select = document.getElementById('peds-drug-select');
+            select.innerHTML = '';
+            pediatricDrugsList.forEach(drug => {
+                const opt = document.createElement('option');
+                opt.value = drug.id;
+                opt.innerText = `${drug.name} [${drug.category}]`;
+                select.appendChild(opt);
+            });
+        }
+
+        function calculatePediatricDose() {
+            const weight = parseFloat(document.getElementById('peds-weight').value);
+            const drugId = document.getElementById('peds-drug-select').value;
+            const outputBox = document.getElementById('pedsResultOutput');
+
+            if (!weight || weight <= 0) {
+                outputBox.style.display = 'none';
+                return;
+            }
+
+            const drug = pediatricDrugsList.find(d => d.id === drugId);
+            if (!drug) return;
+
+            outputBox.style.display = 'block';
+            let calculatedMg = (weight * drug.mgPerKg);
+            if (drug.maxDoseMg && calculatedMg > drug.maxDoseMg) calculatedMg = drug.maxDoseMg;
+            const calculatedMl = ((calculatedMg / drug.concMg) * drug.concMl).toFixed(1);
+
+            outputBox.innerHTML = `
+                <h4 style="color:#166534; font-size:1.05rem; margin-bottom:0.6rem;"><i class="fas fa-check-circle"></i> ${drug.name} (${weight} kg)</h4>
+                <div style="font-size:0.92rem; line-height:1.7; color:#1e293b;">
+                    <div><strong>• Calculated Dose (mg):</strong> <span style="color:#0369a1; font-weight:800;">${calculatedMg.toFixed(1)} mg</span> (${drug.mgPerKg} mg/kg)</div>
+                    <div><strong>• Calculated Volume (ml):</strong> <span style="color:#16a34a; font-weight:800;">${calculatedMl} ml</span></div>
+                    <div><strong>• Administration Schedule:</strong> ${drug.frequency}</div>
+                    <div style="margin-top:0.4rem; color:#b45309;"><strong><i class="fas fa-shield-halved"></i> Guidance:</strong> ${drug.notes}</div>
+                </div>
+            `;
+        }
+
+        function togglePediatricFormFields() {
+            const dest = document.getElementById('admin-drug-dest').value;
+            document.getElementById('pedsSpecificFields').style.display = dest === 'peds' ? 'block' : 'none';
+        }
+
+        function handleUniversalAddDrugSubmit(e) {
+            e.preventDefault();
+            const dest = document.getElementById('admin-drug-dest').value;
+            const generic = document.getElementById('admin-drug-generic').value.trim();
+            const brand = document.getElementById('admin-drug-brand').value.trim();
+            const category = document.getElementById('admin-drug-category').value.trim();
+            const forms = document.getElementById('admin-drug-forms').value.trim();
+            const dose = document.getElementById('admin-drug-dose').value.trim();
+            const indications = document.getElementById('admin-drug-indications').value.trim();
+            const contra = document.getElementById('admin-drug-contra').value.trim();
+            const counseling = document.getElementById('admin-drug-counseling').value.trim();
+
+            if (dest === 'peds') {
+                const mgkg = parseFloat(document.getElementById('admin-peds-mgkg').value);
+                const concMg = parseFloat(document.getElementById('admin-peds-concmg').value);
+                const concMl = parseFloat(document.getElementById('admin-peds-concml').value);
+                const freq = document.getElementById('admin-peds-frequency').value.trim() || "As directed";
+                const maxDose = parseFloat(document.getElementById('admin-peds-maxdose').value) || null;
+
+                if (!mgkg || !concMg || !concMl) {
+                    alert("يرجى إدخال قيم المعادلة الرياضية لجرعة الأطفال بدقة!");
+                    return;
+                }
+
+                pediatricDrugsList.unshift({
+                    id: "peds_" + Date.now(),
+                    name: `${brand} (${generic})`,
+                    category, mgPerKg: mgkg, concMg, concMl, frequency: freq, maxDoseMg: maxDose,
+                    notes: `${indications} | Contraindications: ${contra}`
+                });
+                localStorage.setItem('md_peds_drugs', JSON.stringify(pediatricDrugsList));
+                populatePediatricDropdown();
+                alert(`تمت إضافة دواء الأطفال (${brand}) بنجاح!`);
+                switchTab('tab-peds');
+            } else if (dest === 'er') {
+                emergencyDrugs.unshift({
+                    id: "er_" + Date.now(),
+                    name: `${generic} (${brand})`,
+                    category, summary: indications.substring(0, 80) + "...",
+                    indications, adultDose: dose, dilution: counseling, contraindications: contra, warnings: forms
+                });
+                renderERDrugs();
+                alert(`تمت إضافة الدواء لقسم الطوارئ بنجاح!`);
+                switchTab('tab-er-drugs');
+            } else {
+                iraqiPharmacyDrugs.unshift({
+                    id: "iq_" + Date.now(),
+                    tradeName: brand, genericName: generic, category, forms, indications, adultDose: dose, contraindications: contra, counseling
+                });
+                renderIraqiDrugs();
+                alert(`تمت إضافة الدواء لصيدلية العراق بنجاح!`);
+                switchTab('tab-iraqi-rx');
+            }
+        }
+
+        let emergencyDrugs = [
+            { id: "er_1", name: "Adrenaline (Epinephrine)", category: "Cardiovascular / Inotrope", summary: "First-line drug for cardiac arrest and anaphylaxis.", indications: "Cardiac arrest, Anaphylaxis, Severe croup.", adultDose: "• Arrest: 1 mg IV q3-5min (1:10,000).\n• Anaphylaxis: 0.5 mg IM (1:1,000).", dilution: "Give undiluted followed by 20ml NS flush.", contraindications: "No contraindications in cardiac arrest.", warnings: "Accidental IV 1:1,000 causes lethal arrhythmias." },
+            { id: "er_2", name: "Amiodarone (Cordarone)", category: "Class III Antiarrhythmic", summary: "Broad-spectrum agent for shockable arrhythmias.", indications: "Refractory VF / Pulseless VT, Stable VT.", adultDose: "• Arrest: 300 mg IV push after 3rd shock, then 150 mg.", dilution: "Dilute only in D5W (incompatible with Saline).", contraindications: "Severe sinus bradycardia, 2nd/3rd AV block.", warnings: "Hypotension during rapid infusion." }
+        ];
+
+        let iraqiPharmacyDrugs = [
+            { id: "iq_1", tradeName: "Augmentin", genericName: "Amoxicillin + Clavulanic Acid", category: "Broad Spectrum Antibiotic", forms: "Tablets 625mg, 1g; Susp 228mg, 457mg", indications: "Pneumonia, sinusitis, UTI, dental abscess.", adultDose: "1 g tablet orally every 12 hours for 7-10 days.", contraindications: "Penicillin allergy, jaundice history.", counseling: "Take at start of meals to minimize GI distress." },
+            { id: "iq_2", tradeName: "Concor", genericName: "Bisoprolol Fumarate", category: "Beta-1 Blocker", forms: "Tablets 2.5mg, 5mg, 10mg", indications: "Hypertension, chronic angina, stable HF.", adultDose: "2.5 - 5 mg once daily morning.", contraindications: "Severe bradycardia, AV block, acute asthma.", counseling: "Do not stop abruptly. Check pulse rate." }
+        ];
+
+        function renderERDrugs(list = emergencyDrugs) {
+            const grid = document.getElementById('erDrugsGrid');
+            grid.innerHTML = '';
+            list.forEach(drug => {
+                grid.innerHTML += `
+                    <div class="med-action-card" onclick="showERDrugDetail('${drug.id}')">
+                        <div>
+                            <div class="med-card-title"><h4>${drug.name}</h4><span class="med-tag">${drug.category}</span></div>
+                            <p class="med-card-desc">${drug.summary}</p>
+                        </div>
+                        <div class="med-card-footer"><span><i class="fas fa-syringe"></i> Dosing, Dilution & Protocols</span><i class="fas fa-arrow-left"></i></div>
+                    </div>`;
+            });
+        }
+
+        function filterERDrugsLive() {
+            const term = document.getElementById('erDrugSearch').value.toLowerCase().trim();
+            renderERDrugs(emergencyDrugs.filter(d => d.name.toLowerCase().includes(term) || d.category.toLowerCase().includes(term)));
+        }
+
+        function showERDrugDetail(id) {
+            const drug = emergencyDrugs.find(d => d.id === id);
+            if (!drug) return;
+            document.getElementById('modalDrugName').innerText = drug.name;
+            document.getElementById('modalDrugBody').innerHTML = `
+                <div class="drug-detail-row"><h5>Class:</h5><p>${drug.category}</p></div>
+                <div class="drug-detail-row"><h5>Indications:</h5><p>${drug.indications}</p></div>
+                <div class="drug-detail-row"><h5>Emergency Dose:</h5><p style="white-space:pre-line;">${drug.adultDose}</p></div>
+                <div class="drug-detail-row"><h5>Dilution:</h5><p>${drug.dilution}</p></div>
+                <div class="drug-detail-row" style="border-right-color:var(--accent-red);"><h5 style="color:var(--accent-red);">Contraindications:</h5><p>${drug.contraindications}</p></div>
+            `;
+            document.getElementById('drugDetailModal').classList.add('open');
+        }
+
+        function renderIraqiDrugs(list = iraqiPharmacyDrugs) {
+            const grid = document.getElementById('iraqiMedsGrid');
+            grid.innerHTML = '';
+            list.forEach(drug => {
+                grid.innerHTML += `
+                    <div class="med-action-card" onclick="showIraqiDrugDetail('${drug.id}')">
+                        <div>
+                            <div class="med-card-title"><h4>${drug.tradeName}</h4><span class="med-tag" style="background:#f3e8ff; color:#7e22ce;">${drug.category}</span></div>
+                            <div style="font-size:0.83rem; color:#0369a1; font-weight:700; margin-bottom:0.4rem;">${drug.genericName}</div>
+                            <p class="med-card-desc">${drug.indications}</p>
+                        </div>
+                        <div class="med-card-footer"><span><i class="fas fa-prescription"></i> Forms & Counseling</span><i class="fas fa-arrow-left"></i></div>
+                    </div>`;
+            });
+        }
+
+        function filterIraqiDrugsLive() {
+            const term = document.getElementById('iraqiRxSearch').value.toLowerCase().trim();
+            renderIraqiDrugs(iraqiPharmacyDrugs.filter(d => d.tradeName.toLowerCase().includes(term) || d.genericName.toLowerCase().includes(term)));
+        }
+
+        function showIraqiDrugDetail(id) {
+            const drug = iraqiPharmacyDrugs.find(d => d.id === id);
+            if (!drug) return;
+            document.getElementById('modalDrugName').innerText = `${drug.tradeName} (${drug.genericName})`;
+            document.getElementById('modalDrugBody').innerHTML = `
+                <div class="drug-detail-row"><h5>Forms:</h5><p>${drug.forms}</p></div>
+                <div class="drug-detail-row"><h5>Adult Dose:</h5><p>${drug.adultDose}</p></div>
+                <div class="drug-detail-row"><h5>Counseling:</h5><p>${drug.counseling}</p></div>
+            `;
+            document.getElementById('drugDetailModal').classList.add('open');
+        }
+
+        function closeDrugDetailModal() {
+            document.getElementById('drugDetailModal').classList.remove('open');
+        }
+
+        /* ========================================================
+           8. مرضى الردهة وحاسبات GCS & HEART
+           ======================================================== */
+        let patientsList = JSON.parse(localStorage.getItem('md_patients')) || [
+            { id: 101, name: "أمير حيدر العبيدي", doctor: "د. أسامة", cc: "ألم بطني حاد مع حرارة", pmhx: "لا يوجد", pshx: "لا يوجد", bp: "125/80", pulse: "92", spo2: "98", temp: "38.2", diagnosis: "Acute Appendicitis", medications: "Ceftriaxone 1g IV, Paracetamol 1g IV", notes: "تجهيز للعمليات" }
+        ];
+
+        let activePatientEditId = null;
+
+        function renderPatientsList() {
+            const container = document.getElementById('patientsContainer');
+            container.innerHTML = '';
+            const pSelect = document.getElementById('aiSelectedPatient');
+            pSelect.innerHTML = '<option value="none">-- استشارة طبية عامة --</option>';
+
+            patientsList.forEach(p => {
+                container.innerHTML += `
+                    <div class="patient-card" onclick="openPatientModal(${p.id})">
+                        <div>
+                            <div class="card-top"><h3>${p.name}</h3><span class="doc-badge">${p.doctor}</span></div>
+                            <div class="cc-highlight"><strong>الشكوى:</strong> ${p.cc}</div>
+                            <div class="patient-data-item"><strong>التشخيص:</strong> <span>${p.diagnosis}</span></div>
+                        </div>
+                        <div class="vitals-pill-box">
+                            <span class="v-pill">BP: ${p.bp}</span>
+                            <span class="v-pill">HR: ${p.pulse}</span>
+                            <span class="v-pill">SpO2: ${p.spo2}%</span>
+                        </div>
+                    </div>`;
+
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.innerText = `[ردهة] ${p.name} (${p.diagnosis})`;
+                pSelect.appendChild(opt);
+            });
+
+            erTriageList.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = "triage_" + p.id;
+                opt.innerText = `[طوارئ ESI-${p.triageLevel}] ${p.name}`;
+                pSelect.appendChild(opt);
+            });
+
+            hdPatientsList.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = "hd_" + p.id;
+                opt.innerText = `[غسل كلوي] ${p.name} (K: ${p.k})`;
+                pSelect.appendChild(opt);
+            });
+        }
+
+        function openPatientModal(id = null) {
+            activePatientEditId = id;
+            if (id) {
+                const p = patientsList.find(x => x.id === id);
+                document.getElementById('pModalTitle').innerText = `الملف السريري: ${p.name}`;
+                document.getElementById('p-form-id').value = p.id;
+                document.getElementById('p-form-name').value = p.name;
+                document.getElementById('p-form-doctor').value = p.doctor;
+                document.getElementById('p-form-cc').value = p.cc;
+                document.getElementById('p-form-pmhx').value = p.pmhx;
+                document.getElementById('p-form-pshx').value = p.pshx;
+                document.getElementById('p-form-bp').value = p.bp;
+                document.getElementById('p-form-spo2').value = p.spo2;
+                document.getElementById('p-form-pulse').value = p.pulse;
+                document.getElementById('p-form-temp').value = p.temp;
+                document.getElementById('p-form-diag').value = p.diagnosis;
+                document.getElementById('p-form-meds').value = p.medications;
+                document.getElementById('p-form-notes').value = p.notes;
+                document.getElementById('btnDeleteP').style.display = "inline-flex";
+            } else {
+                document.getElementById('pForm').reset();
+                document.getElementById('p-form-id').value = "";
+                document.getElementById('btnDeleteP').style.display = "none";
+            }
+            document.getElementById('patientModal').classList.add('open');
+        }
+
+        function closePatientModal() {
+            document.getElementById('patientModal').classList.remove('open');
+        }
+
+        function saveActivePatient(e) {
+            e.preventDefault();
+            const id = document.getElementById('p-form-id').value;
+            const patientData = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('p-form-name').value.trim(),
+                doctor: document.getElementById('p-form-doctor').value.trim(),
+                cc: document.getElementById('p-form-cc').value.trim(),
+                pmhx: document.getElementById('p-form-pmhx').value,
+                pshx: document.getElementById('p-form-pshx').value,
+                bp: document.getElementById('p-form-bp').value,
+                spo2: document.getElementById('p-form-spo2').value,
+                pulse: document.getElementById('p-form-pulse').value,
+                temp: document.getElementById('p-form-temp').value,
+                diagnosis: document.getElementById('p-form-diag').value,
+                medications: document.getElementById('p-form-meds').value,
+                notes: document.getElementById('p-form-notes').value
+            };
+
+            if (id) {
+                const idx = patientsList.findIndex(x => x.id === parseInt(id));
+                patientsList[idx] = patientData;
+            } else {
+                patientsList.unshift(patientData);
+            }
+
+            localStorage.setItem('md_patients', JSON.stringify(patientsList));
+            closePatientModal();
+            renderPatientsList();
+        }
+
+        function deleteActivePatient() {
+            if (confirm("هل تريد بالتأكيد حذف ملف هذا المريض؟")) {
+                patientsList = patientsList.filter(x => x.id !== activePatientEditId);
+                localStorage.setItem('md_patients', JSON.stringify(patientsList));
+                closePatientModal();
+                renderPatientsList();
+            }
+        }
+
+        function runGCSCalculation() {
+            const total = parseInt(document.getElementById('calc-gcs-e').value) + parseInt(document.getElementById('calc-gcs-v').value) + parseInt(document.getElementById('calc-gcs-m').value);
+            document.getElementById('gcsScoreVal').innerText = `${total} / 15`;
+            const banner = document.getElementById('gcsResultBanner');
+            if (total <= 8) {
+                banner.className = "decision-banner decision-stop";
+                document.getElementById('gcsActionText').innerText = "غيبوبة شديدة (GCS ≤ 8): تأمين مجرى التنفس والتنبيب الرغامي فوراً [ATLS].";
+            } else {
+                banner.className = "decision-banner decision-safe";
+                document.getElementById('gcsActionText').innerText = "وعي معتدل أو طبيعي (GCS 9-15).";
+            }
+        }
+
+        function runHeartCalculation() {
+            const total = parseInt(document.getElementById('hs-h').value) + parseInt(document.getElementById('hs-e').value) + parseInt(document.getElementById('hs-a').value) + parseInt(document.getElementById('hs-r').value) + parseInt(document.getElementById('hs-t').value);
+            document.getElementById('heartScoreVal').innerText = `${total} / 10`;
+            const banner = document.getElementById('heartResultBanner');
+            if (total <= 3) {
+                banner.className = "decision-banner decision-safe";
+                document.getElementById('heartActionText').innerText = "خطورة منخفضة (1.7% MACE risk). إمكانية التخريج الآمن مع المتابعة.";
+            } else if (total <= 6) {
+                banner.className = "decision-banner decision-caution";
+                document.getElementById('heartActionText').innerText = "خطورة متوسطة (16.6% MACE risk). تنويم ومراقبة تخطيط وتروبونين.";
+            } else {
+                banner.className = "decision-banner decision-stop";
+                document.getElementById('heartActionText').innerText = "خطورة عالية جداً (50-65% MACE risk)! قسطرة قلبية عاجلة ودخول CCU.";
+            }
+        }
+
+        /* ========================================================
+           9. عميل الذكاء الاصطناعي السريري التفاعلي بالصوت والربط
+           ======================================================== */
+        let recognition = null;
+        let isRecording = false;
+
+        function toggleAIPanel() {
+            document.getElementById('aiPanel').classList.toggle('open');
+        }
+
+        function appendAIMessage(sender, htmlText) {
+            const box = document.getElementById('aiChatBox');
+            const msg = document.createElement('div');
+            msg.className = `ai-msg ${sender}`;
+            msg.innerHTML = htmlText;
+            box.appendChild(msg);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function toggleVoiceRecognition() {
+            const btn = document.getElementById('aiVoiceBtn');
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRec) {
+                alert("متصفحك لا يدعم خاصية التعرف على الصوت المباشرة. يرجى استخدام متصفح حديث كـ Chrome أو Edge.");
+                return;
+            }
+
+            if (!recognition) {
+                recognition = new SpeechRec();
+                recognition.lang = 'ar-SA';
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    isRecording = true;
+                    btn.classList.add('recording');
+                    btn.innerHTML = '<i class="fas fa-stop"></i>';
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('aiChatInput').value = transcript;
+                    handleUserSendMessage();
+                };
+
+                recognition.onerror = function(event) {
+                    btn.classList.remove('recording');
+                    btn.innerHTML = '<i class="fas fa-microphone"></i>';
+                    isRecording = false;
+                };
+
+                recognition.onend = function() {
+                    btn.classList.remove('recording');
+                    btn.innerHTML = '<i class="fas fa-microphone"></i>';
+                    isRecording = false;
+                };
+            }
+
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function handlePatientContextChange() {
+            const val = document.getElementById('aiSelectedPatient').value;
+            if (val.startsWith("triage_")) {
+                const id = parseInt(val.replace("triage_", ""));
+                const p = erTriageList.find(x => x.id === id);
+                if (p) appendAIMessage('bot', `سياق طوارئ محمل: <strong>${p.name}</strong> [${p.triageTitle}]<br>الشكوى: ${p.cc}<br>الضغط: ${p.bp} | النبض: ${p.hr} | SpO2: ${p.spo2}%<br>أنا جاهز لتقديم المشورة وتوجيه الفحوصات.`);
+            } else if (val.startsWith("hd_")) {
+                const id = parseInt(val.replace("hd_", ""));
+                const p = hdPatientsList.find(x => x.id === id);
+                if (p) appendAIMessage('bot', `سياق غسل كلوي محمل: <strong>${p.name}</strong><br>البوتاسيوم: ${p.k} mmol/L | احتباس سوائل: +${(p.preWeight - p.dryWeight).toFixed(1)} kg<br>الضغط: ${p.bp}<br>جاهز لمراجعة التحاليل وبروتوكول الجلسة.`);
+            } else if (val !== 'none') {
+                const p = patientsList.find(x => x.id == val);
+                if (p) appendAIMessage('bot', `سياق ردهة محمل: <strong>${p.name}</strong> (${p.diagnosis})<br>الشكوى: ${p.cc}<br>الأدوية: ${p.medications}`);
+            }
+        }
+
+        async function handleUserSendMessage() {
+            const input = document.getElementById('aiChatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            appendAIMessage('user', text);
+            input.value = '';
+
+            // إذا كان المزود Gemini ومفتاح API موجود
+            if (systemConfig.aiProvider === 'gemini' && systemConfig.geminiApiKey) {
+                await callGeminiApi(text);
+            } else {
+                setTimeout(() => {
+                    let reply = `أنا معك يا دكتور. قمت بمطابقة استفسارك مع أحدث المراجع السريرية العالمية (UpToDate • BNF • KDIGO).`;
+                    const q = text.toLowerCase();
+
+                    if (q.includes("أكتيليز") || q.includes("alteplase")) {
+                        reply = `بخصوص مذيب التخثر <strong>Alteplase</strong>: تأكد أن الأعراض بدأت قبل أقل من 4.5 ساعة، ونفي النزيف الدماغي عبر CT Brain، وضبط ضغط الدم ليكون أقل من 185/110 mmHg. يمنع في حال وجود سوابق نزيف دماغي أو صفائح أقل من 100 ألف. <span class="source-tag">AHA/ASA</span>`;
+                    } else if (q.includes("بوتاسيوم") || q.includes("غسل") || q.includes("كلوي")) {
+                        reply = `في حال فرط البوتاسيوم الشديد (K+ > 6.5 mmol/L): يجب إعطاء <strong>Calcium Gluconate 10% (10ml IV)</strong> فوراً لحماية عضلة القلب قبل الشروع بوصل المريض للغسل، واستخدام حمام غسل منخفض البوتاسيوم. <span class="source-tag">KDIGO</span>`;
+                    } else if (q.includes("ترياج") || q.includes("فرز")) {
+                        reply = `نظام ESI يعتمد 5 مستويات: المستوى 1 إنعاش فوري مهدد للحياة، المستوى 2 حالات حرجة مثل اشتباه STEMI وسكتة، المستوى 3 يحتاج موارد متعددة لكنه مستقر حيوياً. <span class="source-tag">Emergency Triage</span>`;
+                    } else if (q.includes("propranolol") || q.includes("ربو")) {
+                        reply = `تحذير قاتل: حاصرات بيتا غير الانتقائية (Propranolol) تؤدي لتشنج قصبي حاد ومميت لدى مرضى الربو القصبي! <span class="source-tag">BNF Alert</span>`;
+                    }
+
+                    appendAIMessage('bot', reply);
+                }, 400);
+            }
+        }
+
+        async function callGeminiApi(userPrompt) {
+            appendAIMessage('bot', '<em>جارٍ استشارة محرك Gemini API المباشر...</em>');
+            const apiKey = systemConfig.geminiApiKey;
+            const prompt = `You are an expert clinical MD medical assistant embedded in an emergency and hemodialysis hospital dashboard. Answer in clear, professional Arabic. Cite guidelines like UpToDate, BNF, KDIGO. Doctor's question: ${userPrompt}`;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await res.json();
+                const reply = data.candidates[0].content.parts[0].text;
+                const box = document.getElementById('aiChatBox');
+                box.removeChild(box.lastChild);
+                appendAIMessage('bot', reply + `<br><span class="source-tag">Gemini API Connected</span>`);
+            } catch (err) {
+                const box = document.getElementById('aiChatBox');
+                box.removeChild(box.lastChild);
+                appendAIMessage('bot', `<span style="color:var(--accent-red);">تعذر الاتصال بمفتاح Gemini الخارجي، تم التبديل للمحرك السريري الداخلي تلقائياً.</span>`);
+            }
+        }
+
+        function sendQuickPrompt(type) {
+            if (type === 'audit_ward') {
+                triggerAIPatientsAudit();
+            } else if (type === 'audit_hd') {
+                let report = "<strong><i class='fas fa-droplet'></i> تقرير تدقيق مرضى الغسل الكلوي:</strong><br><br>";
+                hdPatientsList.forEach(p => {
+                    report += `• <strong>${p.name}:</strong> ${p.aiAdvice}<br><br>`;
+                });
+                appendAIMessage('bot', report);
+            } else if (type === 'triage_help') {
+                appendAIMessage('bot', `<strong>معايير الفرز السريري السريع للطوارئ (ESI):</strong><br>• ESI 1 (أحمر): إنعاش فوري دون انتظار.<br>• ESI 2 (برتقالي): ألم صدر وصفي، اضطراب وعي، علامات صدمة.<br>• ESI 3 (أصفر): علامات حيوية متماسكة لكن يتطلب تحاليل وسونار.<br><span class="source-tag">ESI Triage</span>`);
+            }
+        }
+
+        function triggerAIPatientsAudit() {
+            if (!document.getElementById('aiPanel').classList.contains('open')) toggleAIPanel();
+            appendAIMessage('user', 'تدقيق شامل لمرضى الردهة.');
+            setTimeout(() => {
+                let rep = "<strong><i class='fas fa-microchip'></i> تقرير التدقيق السريري:</strong><br><br>";
+                patientsList.forEach(p => {
+                    if (p.medications.toLowerCase().includes("propranolol") && p.pmhx.includes("ربو")) {
+                        rep += `<span style="color:var(--accent-red); font-weight:800;">🚨 خطر: المريض ${p.name} مصاب بالربو ويأخذ Propranolol!</span><br>`;
+                    } else {
+                        rep += `• المريض ${p.name}: مؤشرات مستقرة.<br>`;
+                    }
+                });
+                appendAIMessage('bot', rep);
+            }, 400);
+        }
+
+        /* ========================================================
+           10. التهيئة الأولية عند التشغيل
+           ======================================================== */
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu button').forEach(btn => btn.classList.remove('active'));
+
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.add('active');
+
+            const activeBtn = Array.from(document.querySelectorAll('.sidebar-menu button')).find(b => b.getAttribute('onclick').includes(tabId));
+            if (activeBtn) activeBtn.classList.add('active');
+
+            if (tabId === 'tab-admin' && !isAdminUnlocked) {
+                document.getElementById('adminLockScreen').style.display = 'block';
+                document.getElementById('adminUnlockedContent').style.display = 'none';
+            }
+
+            toggleSidebar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDynamicSidebar();
+            applyBannerSettings();
+            applyAISettings();
+            renderERTriageList();
+            renderHDPatientsList();
+            renderPatientsList();
+            buildActilyseChecklist();
+            buildCTChecklist();
+            populatePediatricDropdown();
+            renderERDrugs();
+            renderIraqiDrugs();
+            runGCSCalculation();
+            runHeartCalculation();
+        });
+    </script>
+</body>
+</html>
+
